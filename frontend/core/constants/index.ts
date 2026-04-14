@@ -57,3 +57,81 @@ export const DUMMY_PRODUCTS = [
     description: 'Full-face protection headgear with excellent visibility and padding.'
   }
 ];
+
+export const TRENDING_PRODUCTS = [
+  {
+    id: 101,
+    name: 'Stealth Punching Bag',
+    price: '$149.99',
+    image: 'https://images.unsplash.com/photo-1594381898411-846e7d193883?auto=format&fit=crop&w=600&q=80',
+    rating: 4.8,
+    description: 'Minimalist design, maximum durability for home gym warriors.'
+  },
+  {
+    id: 102,
+    name: 'Elite Sparring Gloves',
+    price: '$85.00',
+    image: 'https://images.unsplash.com/photo-1552072092-7f9b8d63efcb?auto=format&fit=crop&w=600&q=80',
+    rating: 4.9,
+    description: 'Perfect weight distribution for safe sparring sessions.'
+  },
+  {
+    id: 103,
+    name: 'Compression Rash Guard',
+    price: '$45.00',
+    image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=600&q=80',
+    rating: 4.6,
+    description: 'Anti-slip technology for high-intensity rolling.'
+  },
+  {
+    id: 104,
+    name: 'Muay Thai Shorts',
+    price: '$35.00',
+    image: 'https://images.unsplash.com/photo-1517438322307-e67111335449?auto=format&fit=crop&w=600&q=80',
+    rating: 4.7,
+    description: 'Classic Thai cut with flexible waistbands.'
+  },
+  {
+    id: 105,
+    name: 'Gym Bag 2.0',
+    price: '$65.00',
+    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80',
+    rating: 4.5,
+    description: 'Spacious compartments for all your combat gear.'
+  }
+];
+
+export const NEW_RELEASES = [
+  {
+    id: 201,
+    name: 'Kevlar Hand Wraps',
+    price: '$24.99',
+    image: 'https://images.unsplash.com/photo-1583485088034-607f320e6d1e?auto=format&fit=crop&w=600&q=80',
+    rating: 4.9,
+    description: 'New material for ultimate knuckle protection.'
+  },
+  {
+    id: 202,
+    name: 'Hybrid Training Short',
+    price: '$55.00',
+    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=600&q=80',
+    rating: 4.8,
+    description: 'Ideal from heavy bags to cardio drills.'
+  },
+  {
+    id: 203,
+    name: 'Agility Speed Ladder',
+    price: '$19.99',
+    image: 'https://images.unsplash.com/photo-1434682881908-b43d0467b798?auto=format&fit=crop&w=600&q=80',
+    rating: 4.4,
+    description: 'Sharpen your footwork with our latest Pro-Series ladder.'
+  },
+  {
+    id: 204,
+    name: 'Thermal Shaker Bottle',
+    price: '$29.00',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
+    rating: 4.5,
+    description: 'Keeps your supplements cold for up to 12 hours.'
+  }
+];
