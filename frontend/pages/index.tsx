@@ -1,6 +1,6 @@
 import ProductList from "@/components/product";
 import ScrollableProductSection from "@/components/product/ScrollableProductSection";
-import TrendingCarousel from "@/components/product/TrendingSlider";
+import TrendingCarousel from "@/components/product/trending-slider";
 import { NEW_RELEASES } from "@/core/constants";
 
 const IndexPage = () => {

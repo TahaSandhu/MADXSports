@@ -61,11 +61,11 @@ const Dropdown = ({ category }: any) => {
         onMouseLeave={handleLeave}
         sx={{
           position: "fixed",
-          top: 68,
+          top: 65,
           left: 0,
           width: "100%",
-          bgcolor: "#f5f5f5",
-          color: "#000",
+          bgcolor: "#0f0d0dff",
+          color: "#ffffffff",
           boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
           py: 5,
           zIndex: 1200,
@@ -87,7 +87,7 @@ const Dropdown = ({ category }: any) => {
         >
           {sectionsToRender.map((sec: any) => (
             <Box key={sec.title}>
-              <Box sx={{ fontWeight: "bold", mb: 1.5 }}>
+              <Box sx={{ fontWeight: "bold", mb: 1.5, color: "#ff1744" }}>
                 {sec.title}
               </Box>
 
