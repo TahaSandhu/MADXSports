@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { CurrencyContext } from '@/core/context/CurrencyContext';
 import { useCart } from '@/core/context/CartContext';
+import { useRouter } from 'next/router';
 
 interface ProductCardProps {
   product: {
@@ -25,10 +26,9 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
-  console.log("t1 product", product)
   const { currency } = useContext(CurrencyContext);
   const { addToCart } = useCart();
-
+  const router = useRouter();
   const getPrice = (basePrice: string) => {
     const num = parseFloat(basePrice.replace('$', ''));
     switch (currency) {
@@ -41,7 +41,7 @@ const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
   };
 
   return (
-    <Box sx={{ perspective: '1000px', height: '100%' }}>
+    <Box sx={{ perspective: '1000px', height: '100%' }} onClick={() => router.push(`/product-detail/${product.id}`)}>
       <Card 
         sx={{ 
           width: width,

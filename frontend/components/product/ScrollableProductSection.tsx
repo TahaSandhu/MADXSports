@@ -26,7 +26,7 @@ const ScrollableProductSection: React.FC<ScrollableProductSectionProps> = ({
               position: "absolute",
               bottom: -8,
               left: 0,
-              width: 60,
+              width: 40,
               height: 4,
               bgcolor: "primary.main",
             },
@@ -43,7 +43,6 @@ const ScrollableProductSection: React.FC<ScrollableProductSectionProps> = ({
             pb: 2,
             px: 1,
             scrollBehavior: "smooth",
-
             "&::-webkit-scrollbar": {
               height: 8,
             },
@@ -61,13 +60,13 @@ const ScrollableProductSection: React.FC<ScrollableProductSectionProps> = ({
             <Box
               key={product.id}
               sx={{
-                width: 400,
-                minWidth: { xs: 280, sm: 400 },
+                width: { xs: "200px", sm: "250px", md: "300px" },
+                minWidth: { xs: "200px", sm: "250px", md: "300px" },
               }}
             >
               <SimpleProductCard
                 product={product}
-                isDiscription={product.isDiscription}
+                isDiscription={product.isDiscription || false}
               />
             </Box>
           ))}

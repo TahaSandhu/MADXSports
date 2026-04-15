@@ -10,18 +10,18 @@ const SimpleProductCard = ({ product , isDiscription }: SimpleProductCardProps) 
   return (
     <Card
       sx={{
-        height: 340,
-        display: 'flex',
-        flexDirection: 'column',
-        cursor: 'pointer',
+        height: { xs: 300, sm: 320, md: 340 },
+        display: "flex",
+        flexDirection: "column",
+        cursor: "pointer",
         borderRadius: 3,
-        overflow: 'hidden',
-        transition: 'all 0.3s ease',
-        position: 'relative',
-        '&:hover': {
-          transform: 'translateY(-6px) scale(1.02)',
+        overflow: "hidden",
+        transition: "all 0.3s ease",
+        position: "relative",
+        "&:hover": {
+          transform: "translateY(-6px) scale(1.02)",
           boxShadow: 6,
-          '& .hoverView': {
+          "& .hoverView": {
             opacity: 1,
           },
         },
@@ -33,9 +33,12 @@ const SimpleProductCard = ({ product , isDiscription }: SimpleProductCardProps) 
           image={product?.image}
           alt={product?.name}
           sx={{
-            height: !isDiscription ? 400 : 250,
-            width: '100%',
-            objectFit: 'contain',
+            height: !isDiscription
+              ? { xs: 320, md: 400 }
+              : { xs: 200, md: 250 },
+            width: "100%",
+            objectFit: "contain",
+            bgcolor: "rgba(255,255,255,0.02)",
           }}
         />
         <Box
@@ -62,18 +65,7 @@ const SimpleProductCard = ({ product , isDiscription }: SimpleProductCardProps) 
         <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} noWrap>
           {product?.name}
         </Typography>
-
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            mt: 1,
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
-        >
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} noWrap>
           {product?.description}
         </Typography>
       </CardContent>

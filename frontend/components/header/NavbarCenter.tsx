@@ -1,6 +1,6 @@
-import { Box, Button, Menu, MenuItem } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { CATEGORIES_DATA } from "@/core/constants";
 
 const hoverStyle = {
@@ -15,7 +15,7 @@ const NavbarCenter = () => {
   return (
     <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
       {CATEGORIES_DATA.map((cat) =>
-        cat.items ? (
+        cat.items || cat.sections ? (
           <Dropdown key={cat.name} category={cat} />
         ) : (
           <SimpleButton key={cat.name} name={cat.name} />
@@ -26,35 +26,88 @@ const NavbarCenter = () => {
 };
 
 const Dropdown = ({ category }: any) => {
-  const [anchor, setAnchor] = useState<null | HTMLElement>(null);
+  const [open, setOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  if (!category.sections && !category.items) return null;
+
+  const handleEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setOpen(true);
+  };
+
+  const handleLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setOpen(false);
+    }, 200);
+  };
+
+  const sectionsToRender = category.sections
+    ? category.sections
+    : category.items
+    ? [{ title: category.name, items: category.items }]
+    : [];
 
   return (
     <>
-      <Button
-        color="inherit"
-        onClick={(e) => setAnchor(e.currentTarget)}
-        endIcon={<ExpandMore />}
-        sx={hoverStyle}
-      >
-        {category.name}
-      </Button>
+      <Box onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+        <Button color="inherit" endIcon={<ExpandMore />} sx={hoverStyle}>
+          {category.name}
+        </Button>
+      </Box>
 
-      <Menu
-        anchorEl={anchor}
-        open={Boolean(anchor)}
-        onClose={() => setAnchor(null)}
-        disableScrollLock
+      <Box
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
+        sx={{
+          position: "fixed",
+          top: 68,
+          left: 0,
+          width: "100%",
+          bgcolor: "#f5f5f5",
+          color: "#000",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+          py: 5,
+          zIndex: 1200,
+          opacity: open ? 1 : 0,
+          visibility: open ? "visible" : "hidden",
+          pointerEvents: open ? "auto" : "none",
+          transition: "all 0.2s ease",
+        }}
       >
-        {category.items.map((item: string) => (
-          <MenuItem
-            key={item}
-            onClick={() => setAnchor(null)}
-            sx={hoverStyle}
-          >
-            {item}
-          </MenuItem>
-        ))}
-      </Menu>
+        <Box
+          sx={{
+            maxWidth: 1300,
+            mx: "auto",
+            px: 4,
+            display: "grid",
+            gridTemplateColumns: "repeat(6, 1fr)",
+            gap: 6,
+          }}
+        >
+          {sectionsToRender.map((sec: any) => (
+            <Box key={sec.title}>
+              <Box sx={{ fontWeight: "bold", mb: 1.5 }}>
+                {sec.title}
+              </Box>
+
+              {sec.items?.map((item: string) => (
+                <Box
+                  key={item}
+                  sx={{
+                    fontSize: "0.85rem",
+                    mb: 0.7,
+                    cursor: "pointer",
+                    "&:hover": { color: "#ff1744" },
+                  }}
+                >
+                  {item}
+                </Box>
+              ))}
+            </Box>
+          ))}
+        </Box>
+      </Box>
     </>
   );
 };

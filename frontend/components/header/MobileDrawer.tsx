@@ -67,8 +67,10 @@ const Dropdown = ({ category }: any) => {
   const [open, setOpen] = useState(false);
 
   const hasItems = Array.isArray(category.items) && category.items.length > 0;
+  const hasSections =
+    Array.isArray(category.sections) && category.sections.length > 0;
 
-  if (!hasItems) {
+  if (!hasItems && !hasSections) {
     return (
       <ListItem disablePadding>
         <ListItemButton sx={hoverStyle}>
@@ -88,11 +90,54 @@ const Dropdown = ({ category }: any) => {
       </ListItem>
 
       <Collapse in={open} unmountOnExit>
-        {category.items.map((item: string) => (
-          <ListItemButton key={item} sx={{ pl: 4 }}>
-            <ListItemText primary={item} />
-          </ListItemButton>
-        ))}
+        <List component="div" disablePadding>
+          {hasSections
+            ? category.sections.map((section: any) => (
+                <SectionDropdown key={section.title} section={section} />
+              ))
+            : category.items.map((item: string) => (
+                <ListItemButton key={item} sx={{ pl: 4 }}>
+                  <ListItemText primary={item} />
+                </ListItemButton>
+              ))}
+        </List>
+      </Collapse>
+    </>
+  );
+};
+
+const SectionDropdown = ({ section }: any) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <ListItemButton
+        onClick={() => setOpen(!open)}
+        sx={{ pl: 4, ...hoverStyle }}
+      >
+        <ListItemText
+          primary={section.title}
+          sx={{
+            "& .MuiTypography-root": { fontSize: "0.95rem", fontWeight: 500 },
+          }}
+        />
+        {open ? (
+          <ExpandLess fontSize="small" />
+        ) : (
+          <ExpandMore fontSize="small" />
+        )}
+      </ListItemButton>
+      <Collapse in={open} unmountOnExit>
+        <List component="div" disablePadding>
+          {section.items.map((item: string) => (
+            <ListItemButton key={item} sx={{ pl: 7 }}>
+              <ListItemText
+                primary={item}
+                sx={{ "& .MuiTypography-root": { fontSize: "0.85rem" } }}
+              />
+            </ListItemButton>
+          ))}
+        </List>
       </Collapse>
     </>
   );

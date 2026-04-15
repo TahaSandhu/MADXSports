@@ -36,11 +36,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           mode,
           ...(mode === 'dark'
             ? {
-                primary: { main: '#ff1744' }, // Vibrant, energetic red
+                primary: { main: '#ff1744' },
                 background: { default: '#000000', paper: '#111111' },
               }
             : {
-                primary: { main: '#d32f2f' }, // strong red for light mode visibility
+                primary: { main: '#d32f2f' },
                 background: { default: '#fff5f5', paper: '#ffffff' },
               }),
         },
