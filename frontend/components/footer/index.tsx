@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Container, Link, Grid, IconButton, useTheme } from '@mui/material';
 
-export default function Footer() {
+const Footer = () => {
   const { palette } = useTheme();
   const isDarkMode = palette.mode === 'dark';
 
@@ -12,10 +12,10 @@ export default function Footer() {
           <Grid size={{ xs: 12, sm: 4 }}>
             <Box
               component="img"
-              src="/logof.jpeg"
+              src="/logof.png"
               alt="MADXSports Logo"
               sx={{
-                height: 50,
+                height: 70,
                 width: "auto",
                 mb: 2,
               }}
@@ -67,3 +67,4 @@ export default function Footer() {
     </Box>
   );
 }
+export default Footer 

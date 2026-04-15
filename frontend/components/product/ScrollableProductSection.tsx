@@ -1,62 +1,74 @@
-import React from 'react';
-import { Box, Typography, Container } from '@mui/material';
-import ProductCard from './ProductCard';
+import React from "react";
+import { Box, Typography, Container } from "@mui/material";
+import SimpleProductCard from "./SimpleProductCard";
 
 interface ScrollableProductSectionProps {
   title: string;
   products: any[];
 }
 
-const ScrollableProductSection: React.FC<ScrollableProductSectionProps> = ({ title, products }) => {
+const ScrollableProductSection: React.FC<ScrollableProductSectionProps> = ({
+  title,
+  products,
+}) => {
   return (
-    <Box sx={{ py: 6, bgcolor: 'background.default' }}>
+    <Box sx={{ py: 6, bgcolor: "background.default" }}>
       <Container maxWidth="lg">
-        <Typography 
-          variant="h4" 
-          component="h2" 
-          sx={{ 
-            fontWeight: 'bold', 
-            mb: 4, 
-            textAlign: { xs: 'center', md: 'left' },
-            position: 'relative',
-            '&::after': {
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{
+            fontWeight: "bold",
+            mb: 3,
+            position: "relative",
+            "&::after": {
               content: '""',
-              position: 'absolute',
+              position: "absolute",
               bottom: -8,
-              left: { xs: '50%', md: 0 },
-              transform: { xs: 'translateX(-50%)', md: 'none' },
+              left: 0,
               width: 60,
               height: 4,
-              bgcolor: 'primary.main',
-            }
+              bgcolor: "primary.main",
+            },
           }}
         >
           {title}
         </Typography>
 
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            overflowX: 'auto', 
-            pb: 4, 
-            px: 1,
+        <Box
+          sx={{
+            display: "flex",
             gap: 3,
-            '&::-webkit-scrollbar': {
+            overflowX: "auto",
+            pb: 2,
+            px: 1,
+            scrollBehavior: "smooth",
+
+            "&::-webkit-scrollbar": {
               height: 8,
             },
-            '&::-webkit-scrollbar-track': {
-              bgcolor: 'rgba(255,255,255,0.05)',
+            "&::-webkit-scrollbar-track": {
+              bgcolor: "rgba(255,255,255,0.05)",
               borderRadius: 10,
             },
-            '&::-webkit-scrollbar-thumb': {
-              bgcolor: 'primary.main',
+            "&::-webkit-scrollbar-thumb": {
+              bgcolor: "primary.main",
               borderRadius: 10,
             },
           }}
         >
-          {products.map((product) => (
-            <Box key={product.id} sx={{ minWidth: { xs: 280, md: 340 } }}>
-              <ProductCard product={product} width="100%" />
+          {products?.map((product) => (
+            <Box
+              key={product.id}
+              sx={{
+                width: 400,
+                minWidth: { xs: 280, sm: 400 },
+              }}
+            >
+              <SimpleProductCard
+                product={product}
+                isDiscription={product.isDiscription}
+              />
             </Box>
           ))}
         </Box>

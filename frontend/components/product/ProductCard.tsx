@@ -24,7 +24,8 @@ interface ProductCardProps {
   width?: number | string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, width = 340 }) => {
+const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
+  console.log("t1 product", product)
   const { currency } = useContext(CurrencyContext);
   const { addToCart } = useCart();
 
@@ -67,6 +68,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, width = 340 }) => {
           image={product.image} 
           alt={product.name} 
           sx={{ 
+            objectFit: 'fill',
             transition: '0.4s',
             '&:hover': {
               transform: 'translateZ(30px) scale(1.05)',
