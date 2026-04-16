@@ -3,13 +3,13 @@ import { Container, Grid, Box, Breadcrumbs, Link, Typography } from "@mui/materi
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ProductImage from "./ProductImage";
 import ProductInfo from "./ProductInfo";
-import { DUMMY_PRODUCTS } from "@/core/constants";
-
+import { DUMMY_PRODUCTS, DUMMY_REVIEWS } from "@/core/constants";
+import Comments from "./Comments";
 interface ProductDetailProps {
   product?: any;
 }
 
-const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
+const ProductDetail = ({ product }) => {
   const displayedProduct = product || DUMMY_PRODUCTS[0];
 
   const images = displayedProduct?.images || [
@@ -49,6 +49,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
         </Grid>
 
         <Box sx={{ mt: 10 }}>
+          <Comments reviews={DUMMY_REVIEWS} />
         </Box>
       </Container>
     </Box>

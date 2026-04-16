@@ -292,3 +292,46 @@ export const NEW_RELEASES = [
     isDiscription: true,
   },
 ];
+
+export const DUMMY_REVIEWS = [
+  {
+    id: "1",
+    name: "Ali Ahmed",
+    rating: 5,
+    comment: "Excellent quality product. Really satisfied with the build and finish.",
+    date: "2026-01-10",
+    avatarUrl: "https://i.pravatar.cc/150?img=12",
+  },
+  {
+    id: "2",
+    name: "Sara Khan",
+    rating: 4,
+    comment: "Very good, but delivery was a bit slow. Overall happy with purchase.",
+    date: "2026-01-08",
+    avatarUrl: "https://i.pravatar.cc/150?img=32",
+  },
+  {
+    id: "3",
+    name: "Usman Tariq",
+    rating: 3,
+    comment: "Product is okay for the price. Could be better in durability.",
+    date: "2026-01-05",
+    avatarUrl: "https://i.pravatar.cc/150?img=56",
+  },
+  {
+    id: "4",
+    name: "Ayesha Malik",
+    rating: 5,
+    comment: "Amazing experience! Highly recommend this to everyone.",
+    date: "2026-01-02",
+    avatarUrl: "https://i.pravatar.cc/150?img=47",
+  },
+  {
+    id: "5",
+    name: "Hassan Raza",
+    rating: 4,
+    comment: "Good product quality and decent packaging. Worth the price.",
+    date: "2025-12-28",
+    avatarUrl: "https://i.pravatar.cc/150?img=21",
+  },
+];

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import {
   Box,
   Card,
@@ -41,7 +41,7 @@ const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
   };
 
   return (
-    <Box sx={{ perspective: '1000px', height: '100%' }} onClick={() => router.push(`/product-detail/${product.id}`)}>
+    <Box sx={{  height: '100%' }} onClick={() => router.push(`/product-detail/${product.id}`)}>
       <Card 
         sx={{ 
           width: width,
@@ -51,13 +51,10 @@ const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
           height: '100%', 
           display: 'flex', 
           flexDirection: 'column', 
-          transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 
-          transformStyle: 'preserve-3d',
           position: 'relative',
           background: 'background.paper',
           border: '1px solid rgba(255,255,255,0.05)',
           '&:hover': { 
-            transform: 'rotateX(8deg) rotateY(-8deg)',
             boxShadow: '20px 20px 60px rgba(0,0,0,0.5)',
           } 
         }}
@@ -70,12 +67,9 @@ const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
           sx={{ 
             objectFit: 'fill',
             transition: '0.4s',
-            '&:hover': {
-              transform: 'translateZ(30px) scale(1.05)',
-            }
           }}
         />
-        <CardContent sx={{ flexGrow: 1, transform: 'translateZ(20px)' }}>
+        <CardContent sx={{ flexGrow: 1 }}>
           <Typography gutterBottom variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
             {product.name}
           </Typography>
@@ -92,7 +86,7 @@ const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
             {product.description}
           </Typography>
         </CardContent>
-        <CardActions sx={{ p: 2, pt: 0, transform: 'translateZ(40px)' }}>
+        <CardActions sx={{ p: 2, pt: 0 }}>
           <Button 
             size="medium" 
             variant="contained" 
@@ -100,9 +94,6 @@ const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
             onClick={() => addToCart(product)}
             sx={{
               boxShadow: '0 4px 14px 0 rgba(255, 23, 68, 0.39)',
-              '&:hover': {
-                transform: 'scale(1.02)',
-              }
             }}
           >
             Add to Cart
