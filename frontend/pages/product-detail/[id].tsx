@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { Box, Typography } from "@mui/material";
 import ProductDetailComponent from "@/components/product-detail";
 import TrendingCarousel from "@/components/product/TrendingCarousel";
-import MainLayout from "@/core/layout/mainLayout";
 import { DUMMY_PRODUCTS, TRENDING_PRODUCTS, NEW_RELEASES } from "@/core/constants";
 
 const ProductDetailPage = () => {
