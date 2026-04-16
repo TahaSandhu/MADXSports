@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Grid, Box, Breadcrumbs, Link, Typography } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ProductImage from "./ProductImage";
@@ -9,7 +8,7 @@ interface ProductDetailProps {
   product?: any;
 }
 
-const ProductDetail = ({ product }) => {
+const ProductDetail = ({ product }: ProductDetailProps) => {
   const displayedProduct = product || DUMMY_PRODUCTS[0];
 
   const images = displayedProduct?.images || [
