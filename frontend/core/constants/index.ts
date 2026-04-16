@@ -79,7 +79,75 @@ export const CATEGORIES_DATA = [
   },
   {
     name: "MMA",
-    items: ["MMA Gloves", "Shin Guards", "Shorts"],
+    sections: [
+      {
+        title: "Approved Ranges",
+        items: ["IMMAF Approved Range", "WAKO Approved Range"],
+      },
+      {
+        title: "MMA Gloves",
+        items: [
+          "Sparring Gloves",
+          "Training Gloves",
+          "Kids Grappling Gloves",
+          "View All",
+        ],
+      },
+      {
+        title: "MMA Punch Bags",
+        items: [
+          "MMA Training Punching Bags",
+          "MMA Punching Bags & Mitts Sets",
+          "Freestanding Punch Bags",
+          "Angle & Uppercut Bags",
+          "Accessories",
+          "Kids MMA Bags",
+          "Speed Bags & Platforms",
+          "View All",
+        ],
+      },
+      {
+        title: "Coaching Equipment",
+        items: [
+          "Focus Mitts",
+          "Kicking Shields",
+          "Thai Pads",
+          "Chest Guard",
+          "View All",
+        ],
+      },
+      {
+        title: "Protective Gear",
+        items: [
+          "Hand Wraps & Inner Gloves",
+          "Head Gear",
+          "Mouth Guards",
+          "Chest Guards",
+          "Groin Protectors",
+          "Knee Wraps",
+          "Shin Guards",
+          "View All",
+        ],
+      },
+      {
+        title: "Training Equipment",
+        items: [
+          "Jump Ropes",
+          "Pull Up Bars",
+          "Fitness Sandbags",
+          "Leg Stretchers",
+          "View All",
+        ],
+      },
+      {
+        title: "Apparel",
+        items: ["MMA Shorts", "Compression Wear", "Sauna Suits", "View All"],
+      },
+      {
+        title: "Equipment Bags",
+        items: ["Equipment Bags", "View All"],
+      },
+    ],
   },
   {
     name: "Muay Thai",
@@ -87,11 +155,115 @@ export const CATEGORIES_DATA = [
   },
   {
     name: "Fitness",
-    items: ["Weight Lifting Belts", "Accessories", "Fitness wears"],
+    sections: [
+      {
+        title: "Gym Gloves",
+        items: [
+          "Fitness & Workout",
+          "Training & Gym",
+          "Heavy Weight Lifting",
+          "View All",
+        ],
+      },
+      {
+        title: "Weightlifting Belts",
+        items: [
+          "Leather Belts",
+          "Training Belts",
+          "Dipping Belts",
+          "Powerlifting Belts",
+          "View All",
+        ],
+      },
+      {
+        title: "Weightlifting Gear",
+        items: [
+          "Weightlifting Grips & Straps",
+          "Arm Blaster",
+          "AB Strap & Triceps Rope",
+          "Head Harness",
+          "View All",
+        ],
+      },
+      {
+        title: "Strength Training",
+        items: [
+          "Pull Up Bars",
+          "Jump Ropes",
+          "Leg Stretchers",
+          "Fitness Bags",
+          "Kettlebelts",
+          "View All",
+        ],
+      },
+      {
+        title: "Stability & Mobility",
+        items: [
+          "Ab Rollers",
+          "Aerobic Step",
+          "Balance Boards",
+          "Resistance Bands",
+          "Resistance Tubes",
+          "View All",
+        ],
+      },
+      {
+        title: "Braces & Support",
+        items: [
+          "Elbow Support",
+          "Back support",
+          "Wrist Support",
+          "Knee Support",
+          "Ankle Support",
+          "View All",
+        ],
+      },
+      {
+        title: "Gym Essentials",
+        items: ["Sauna Suits", "Compression Wear", "Equipment Bags", "View All"],
+      },
+    ],
   },
   {
-    name: "Appearl",
-    items: ["Trousers", "Shirts", "Hoodies"],
+    name: "Apparel",
+    sections: [
+      {
+        title: "Active Wear",
+        items: ["T-Shirts", "Trousers", "Vest", "View All"],
+      },
+      {
+        title: "Compression Wear & Shorts",
+        items: ["MMA Shorts", "Compression Shorts & Pants", "Sweatshirts", "View All"],
+      },
+      {
+        title: "Sauna Range",
+        items: [
+          "Sauna Suits",
+          "Sauna Vests",
+          "Sauna T-Shirts",
+          "Sauna Shorts",
+          "Sauna Leggings",
+          "View All",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Kids",
+    sections: [
+      {
+        title: "Kids",
+        items: [
+          "Kids Boxing Sets",
+          "Kids Boxing Gloves",
+          "Kids MMA Gloves",
+          "Kids Head Guard",
+          "Kids Punch Bags",
+          "Kids Focus Pads",
+          "View All",
+        ],
+      },
+    ],
   },
   {
     name: "Jiujitsu",

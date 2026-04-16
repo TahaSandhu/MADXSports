@@ -1,12 +1,4 @@
-import React from "react";
-import {
-  Box,
-  Typography,
-  Avatar,
-  Rating,
-  Stack,
-  Paper,
-} from "@mui/material";
+import { Box, Typography, Avatar, Rating, Paper } from "@mui/material";
 
 type Review = {
   id: string;
@@ -29,69 +21,68 @@ const Comments = ({ reviews = [], className }: Props) => {
   const count = reviews.length;
 
   const avg =
-    count > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / count
-      : 0;
+    count > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / count : 0;
 
   return (
     <Box className={className}>
-      <Typography variant="h6" gutterBottom>
-        Customer reviews
-      </Typography>
-
-      <Stack direction="row" spacing={1} alignItems="center" mb={2}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 ,pb: 2}}>
-
-        <Typography fontWeight={600}>
-          {avg.toFixed(1)}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          mb: 2,
+          flexWrap: "nowrap",
+          flexDirection: { xs: "column", sm: "row" },
+        alignItems: { xs: "flex-start", sm: "center" },
+        }}
+      >
+        <Typography variant="h6" sx={{ m: 0, whiteSpace: "nowrap" }}>
+          Customer reviews
         </Typography>
 
+        <Typography sx={{ fontWeight: 600 }}>{avg.toFixed(1)}</Typography>
+
         <Rating value={avg} precision={0.1} readOnly />
-        </Box>
 
         <Typography variant="body2" color="text.secondary">
           ({count} review{count !== 1 ? "s" : ""})
         </Typography>
-      </Stack>
+      </Box>
 
       {count === 0 ? (
         <Typography variant="body2" color="text.secondary">
           No reviews yet. Be the first to review this product.
         </Typography>
       ) : (
-        <Stack spacing={2}>
-          {reviews.map((r) => (
-            <Paper key={r.id} variant="outlined" sx={{ p: 2 }}>
-              <Stack direction="row" spacing={2}>
-                <Avatar src={r.avatarUrl}>
-                  {!r.avatarUrl && r.name.charAt(0).toUpperCase()}
-                </Avatar>
+        reviews.map((r) => (
+          <Paper key={r.id} variant="outlined" sx={{ p: 2, mb: 2 }}>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Avatar src={r.avatarUrl}>
+                {!r.avatarUrl && r.name.charAt(0).toUpperCase()}
+              </Avatar>
 
-                <Box flex={1}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Typography variant="subtitle2">
-                      {r.name}
-                    </Typography>
+              <Box sx={{ flex: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography variant="subtitle2">{r.name}</Typography>
 
-                    <Typography variant="caption" color="text.secondary">
-                      {formatDate(r.date)}
-                    </Typography>
-                  </Stack>
-
-                  <Rating value={r.rating} readOnly size="small" />
-
-                  <Typography variant="body2" mt={1}>
-                    {r.comment}
+                  <Typography variant="caption" color="text.secondary">
+                    {formatDate(r.date)}
                   </Typography>
                 </Box>
-              </Stack>
-            </Paper>
-          ))}
-        </Stack>
+
+                <Rating value={r.rating} readOnly size="small" />
+
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  {r.comment}
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+        ))
       )}
     </Box>
   );
