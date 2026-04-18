@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { useRouter } from "next/router";
 import {
   Drawer,
   Box,
@@ -17,6 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useCart } from "@/core/context/CartContext";
 import { CurrencyContext } from "@/core/context/CurrencyContext";
+import { PROTECTED_ROUTES } from "@/core/routes";
 
 interface CartDrawerProps {
   open: boolean;
@@ -26,16 +28,23 @@ interface CartDrawerProps {
 const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
   const { cartItems, removeFromCart, updateQuantity } = useCart();
   const { currency } = useContext(CurrencyContext);
+  const router = useRouter();
+  console.log("t1 cartItems: ", cartItems);
 
   const formatPrice = (priceStr: string, qty: number) => {
     const base = parseFloat(priceStr.replace("$", ""));
     const num = base * qty;
     switch (currency) {
-      case "EUR": return `€${(num * 0.92).toFixed(2)}`;
-      case "GBP": return `£${(num * 0.79).toFixed(2)}`;
-      case "CAD": return `C$${(num * 1.35).toFixed(2)}`;
-      case "PKR": return `Rs ${(num * 278).toFixed(0)}`;
-      default: return `$${num.toFixed(2)}`;
+      case "EUR":
+        return `€${(num * 0.92).toFixed(2)}`;
+      case "GBP":
+        return `£${(num * 0.79).toFixed(2)}`;
+      case "CAD":
+        return `C$${(num * 1.35).toFixed(2)}`;
+      case "PKR":
+        return `Rs ${(num * 278).toFixed(0)}`;
+      default:
+        return `$${num.toFixed(2)}`;
     }
   };
 
@@ -43,21 +52,47 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
     const totalBase = cartItems.reduce((acc, item) => {
       return acc + parseFloat(item.price.replace("$", "")) * item.quantity;
     }, 0);
-    
+
     switch (currency) {
-      case "EUR": return `€${(totalBase * 0.92).toFixed(2)}`;
-      case "GBP": return `£${(totalBase * 0.79).toFixed(2)}`;
-      case "CAD": return `C$${(totalBase * 1.35).toFixed(2)}`;
-      case "PKR": return `Rs ${(totalBase * 278).toFixed(0)}`;
-      default: return `$${totalBase.toFixed(2)}`;
+      case "EUR":
+        return `€${(totalBase * 0.92).toFixed(2)}`;
+      case "GBP":
+        return `£${(totalBase * 0.79).toFixed(2)}`;
+      case "CAD":
+        return `C$${(totalBase * 1.35).toFixed(2)}`;
+      case "PKR":
+        return `Rs ${(totalBase * 278).toFixed(0)}`;
+      default:
+        return `$${totalBase.toFixed(2)}`;
     }
+  };
+
+  const handleCheckout = () => {
+    router.push(PROTECTED_ROUTES[0]);
   };
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
-      <Box sx={{ width: { xs: "100vw", sm: 400 }, p: 3, display: "flex", flexDirection: "column", height: "100%" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-          <Typography variant="h5" sx={{ fontWeight: "bold" }}>Shopping Cart</Typography>
+      <Box
+        sx={{
+          width: { xs: "100vw", sm: 400 },
+          p: 3,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Shopping Cart
+          </Typography>
           <IconButton onClick={onClose}>
             <i className="fa-solid fa-xmark"></i>
           </IconButton>
@@ -68,7 +103,10 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
         <List sx={{ flexGrow: 1, overflowY: "auto", mt: 2 }}>
           {cartItems.length === 0 ? (
             <Box sx={{ mt: 10, textAlign: "center" }}>
-              <i className="fa-solid fa-cart-shopping" style={{ fontSize: "3rem", color: "#ccc", marginBottom: "20px" }}></i>
+              <i
+                className="fa-solid fa-cart-shopping"
+                style={{ fontSize: "3rem", color: "#ccc" }}
+              ></i>
               <Typography color="text.secondary">Your cart is empty</Typography>
             </Box>
           ) : (
@@ -77,28 +115,70 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
                 <ListItem
                   alignItems="flex-start"
                   secondaryAction={
-                    <IconButton edge="end" onClick={() => removeFromCart(item.id)} color="error" size="small">
+                    <IconButton
+                      edge="end"
+                      onClick={() => removeFromCart(item.id)}
+                      color="error"
+                      size="small"
+                    >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   }
                   sx={{ px: 0 }}
                 >
                   <ListItemAvatar>
-                    <Avatar src={item.image} variant="rounded" sx={{ width: 60, height: 60, mr: 2 }} />
+                    <Avatar
+                      src={item.image}
+                      variant="rounded"
+                      sx={{ width: 60, height: 60, mr: 2 }}
+                    />
                   </ListItemAvatar>
+
                   <ListItemText
-                    primary={<Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>{item.name}</Typography>}
+                    primary={
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        {item.name}
+                      </Typography>
+                    }
                     secondary={
                       <Box>
-                        <Typography variant="body2" color="primary" sx={{ fontWeight: "medium", mt: 0.5 }}>
+                        <Typography
+                          variant="body2"
+                          color="primary"
+                          sx={{ fontWeight: "medium", mt: 0.5 }}
+                        >
                           {formatPrice(item.price, 1)}
                         </Typography>
-                        <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-                          <IconButton size="small" onClick={() => updateQuantity(item.id, -1)} sx={{ border: "1px solid #eee", p: 0.2 }}>
+
+                        <Typography
+                          variant="caption"
+                          sx={{ display: "block", mt: 0.5 }}
+                        >
+                          Size: {item.size || "N/A"} | Color:{" "}
+                          {item.color || "N/A"}
+                        </Typography>
+
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", mt: 1 }}
+                        >
+                          <IconButton
+                            size="small"
+                            onClick={() => updateQuantity(item.id, -1)}
+                          >
                             <RemoveIcon fontSize="inherit" />
                           </IconButton>
-                          <Typography sx={{ mx: 1.5, fontSize: "0.9rem" }}>{item.quantity}</Typography>
-                          <IconButton size="small" onClick={() => updateQuantity(item.id, 1)} sx={{ border: "1px solid #eee", p: 0.2 }}>
+
+                          <Typography sx={{ mx: 1.5 }}>
+                            {item.quantity}
+                          </Typography>
+
+                          <IconButton
+                            size="small"
+                            onClick={() => updateQuantity(item.id, 1)}
+                          >
                             <AddIcon fontSize="inherit" />
                           </IconButton>
                         </Box>
@@ -106,6 +186,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
                     }
                   />
                 </ListItem>
+
                 <Divider component="li" />
               </React.Fragment>
             ))
@@ -114,13 +195,26 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
 
         {cartItems.length > 0 && (
           <Box sx={{ pt: 3, borderTop: "2px solid #f5f5f5" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
+            >
               <Typography variant="h6">Total</Typography>
-              <Typography variant="h6" color="primary" sx={{ fontWeight: "bold" }}>
+              <Typography
+                variant="h6"
+                color="primary"
+                sx={{ fontWeight: "bold" }}
+              >
                 {calculateTotal()}
               </Typography>
             </Box>
-            <Button variant="contained" color="primary" fullWidth size="large" sx={{ py: 1.5, borderRadius: 2 }}>
+
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              size="large"
+              onClick={handleCheckout}
+            >
               Checkout Now
             </Button>
           </Box>

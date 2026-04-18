@@ -4,8 +4,11 @@ export interface CartItem {
   id: number;
   name: string;
   price: string;
-  image: string;
   quantity: number;
+  image: string;
+  totalPrice?: string;
+  size?: string;
+  color?: string;
 }
 
 interface CartContextType {

@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import Navbar from "@/components/header";
 import Footer from "@/components/footer";
 import HeroCarousel from "@/components/hero-carousel";
+import WhatsAppButton from "@/components/whats-app";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <Navbar />
       {!isDetailProductRoute && <HeroCarousel key={pathname} />}
       <Box sx={{ flexGrow: 1 }}>{children}</Box>
+      <WhatsAppButton phoneNumber="923001234567" message="Hi, I need help!" />
       <Footer />
     </Box>
   );
