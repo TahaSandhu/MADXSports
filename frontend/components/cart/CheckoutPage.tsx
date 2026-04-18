@@ -116,7 +116,7 @@ const CheckoutForm = () => {
   // Create payment intent
   useEffect(() => {
     if (cartItems.length > 0) {
-      fetch("http://localhost:8080/api/payment/create-payment-intent", {
+      fetch("http://localhost:8080/api/v1/payment/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

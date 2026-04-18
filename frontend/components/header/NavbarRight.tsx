@@ -6,6 +6,7 @@ import { ThemeToggleContext } from "@/core/context/ThemeToggleContext";
 import { useCart } from "@/core/context/CartContext";
 import { useTheme } from "@mui/material/styles";
 import { CURRENCY_DATA } from "@/core/constants";
+import { useRouter } from "next/router";
 
 const hoverStyle = {
   transition: "all 0.3s ease",
@@ -27,9 +28,14 @@ const NavbarRight = ({
   const { currency, setCurrency } = useContext(CurrencyContext);
   const { totalItems } = useCart();
   const theme = useTheme();
+  const router = useRouter();
   const colorMode = useContext(ThemeToggleContext);
 
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
+
+  const handleLogin = () => {
+    router.push("/auth");
+  };
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -72,7 +78,12 @@ const NavbarRight = ({
         <i className="fa-solid fa-magnifying-glass" style={iconStyle}></i>
       </IconButton>
 
-      <IconButton color="inherit" size="small" onClick={onCart} sx={hoverStyle}>
+      <IconButton
+        color="inherit"
+        size="small"
+        onClick={onCart}
+        sx={hoverStyle}
+      >
         <Badge badgeContent={totalItems} color="primary">
           <i className="fa-solid fa-cart-shopping" style={iconStyle}></i>
         </Badge>
@@ -82,6 +93,7 @@ const NavbarRight = ({
         color="inherit"
         size="small"
         sx={{ display: { xs: "none", sm: "flex" }, ...hoverStyle }}
+        onClick={handleLogin}
       >
         <i className="fa-solid fa-user" style={iconStyle}></i>
       </IconButton>
