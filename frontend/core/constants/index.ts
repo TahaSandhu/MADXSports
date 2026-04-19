@@ -1,3 +1,4 @@
+
 export const CATEGORIES_DATA = [
   {
     name: "Boxing",
@@ -275,6 +276,10 @@ export const CATEGORIES_DATA = [
   },
   {
     name: "Contact",
+  },
+  {
+    name: "Dashboard",
+    url: "/dashboard/dashboard",
   },
 ];
 

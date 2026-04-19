@@ -65,7 +65,7 @@ const ProductCard = ({ product, width = 340 }: ProductCardProps) => {
           image={product.image} 
           alt={product.name} 
           sx={{ 
-            objectFit: 'fill',
+            objectFit: 'contain',
             transition: '0.4s',
           }}
         />

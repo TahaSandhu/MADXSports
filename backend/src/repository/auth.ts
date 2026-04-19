@@ -2,60 +2,26 @@ import UserModel from "../model/auth/model";
 import { IUser } from "../model/auth/schema";
 
 
-const getUserByEmail = async (email: string): Promise<IUser | null> => {
-  return UserModel.findOne({ email }).exec();
-};
+export const getUserByEmail = (email: string) =>
+  UserModel.findOne({ email }).exec();
 
-const getUserById = async (id: string): Promise<IUser | null> => {
-  return UserModel.findById(id).exec();
-};
+export const createUser = (data: Partial<IUser>) =>
+  new UserModel(data).save();
 
-const createUser = async (
-  data: Omit<IUser, "_id" | "createdAt" | "updatedAt">
-): Promise<IUser> => {
-  const user = new UserModel(data);
-  return user.save();
-};
-
-const updateUser = async (
-  id: string,
-  data: Partial<IUser>
-): Promise<IUser | null> => {
-  return UserModel.findByIdAndUpdate(id, data, {
-    new: true,
-  }).exec();
-};
-
-const deleteUser = async (id: string): Promise<IUser | null> => {
-  return UserModel.findByIdAndDelete(id).exec();
-};
-
-const updateOtpByEmail = async (
+export const updateOtpByEmail = (
   email: string,
   otp: string,
   otpExpires: Date
-): Promise<IUser | null> => {
-  return UserModel.findOneAndUpdate(
+) =>
+  UserModel.findOneAndUpdate(
     { email },
     { otp, otpExpires },
     { new: true }
   ).exec();
-};
 
-const verifyUser = async (email: string): Promise<IUser | null> => {
-  return UserModel.findOneAndUpdate(
+export const verifyUser = (email: string) =>
+  UserModel.findOneAndUpdate(
     { email },
     { isVerified: true, otp: null, otpExpires: null },
     { new: true }
   ).exec();
-};
-
-export {
-  getUserByEmail,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-  updateOtpByEmail,
-  verifyUser,
-};

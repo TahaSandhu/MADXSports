@@ -1,13 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import type { AppProps } from 'next/app';
-import type { NextPage } from 'next';
-import type { ReactElement, ReactNode } from 'react';
-import MainLayout from '@/core/layout/mainLayout';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { ThemeToggleContext } from '@/core/context/ThemeToggleContext';
-import { CurrencyProvider } from '@/core/context/CurrencyContext';
-import { CartProvider } from '@/core/context/CartContext';
+import React, { useState, useMemo } from "react";
+import type { AppProps } from "next/app";
+import type { NextPage } from "next";
+import type { ReactElement, ReactNode } from "react";
+import MainLayout from "@/core/layout/mainLayout";
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeToggleContext } from "@/core/context/ThemeToggleContext";
+import { CurrencyProvider } from "@/core/context/CurrencyContext";
+import { CartProvider } from "@/core/context/CartContext";
+import { AuthProvider } from "@/core/context/AuthContext";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -18,12 +19,12 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
-  const [mode, setMode] = useState<'light' | 'dark'>('dark');
+  const [mode, setMode] = useState<"light" | "dark">("dark");
 
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
       },
     }),
     [],
@@ -34,32 +35,35 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       createTheme({
         palette: {
           mode,
-          ...(mode === 'dark'
+          ...(mode === "dark"
             ? {
-                primary: { main: '#ff1744' },
-                background: { default: '#000000', paper: '#111111' },
+                primary: { main: "#ff1744" },
+                background: { default: "#000000", paper: "#111111" },
               }
             : {
-                primary: { main: '#d32f2f' },
-                background: { default: '#fff5f5', paper: '#ffffff' },
+                primary: { main: "#d32f2f" },
+                background: { default: "#fff5f5", paper: "#ffffff" },
               }),
         },
       }),
     [mode],
   );
 
-  const getLayout = Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>);
+  const getLayout =
+    Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>);
 
   return (
-    <ThemeToggleContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <CurrencyProvider>
-          <CartProvider>
-            {getLayout(<Component {...pageProps} />)}
-          </CartProvider>
-        </CurrencyProvider>
-      </ThemeProvider>
-    </ThemeToggleContext.Provider>
+    <AuthProvider>
+      <ThemeToggleContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <CurrencyProvider>
+            <CartProvider>
+              {getLayout(<Component {...pageProps} />)}
+            </CartProvider>
+          </CurrencyProvider>
+        </ThemeProvider>
+      </ThemeToggleContext.Provider>
+    </AuthProvider>
   );
 }

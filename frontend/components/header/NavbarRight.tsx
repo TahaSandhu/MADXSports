@@ -1,12 +1,13 @@
 import { useContext, useState } from "react";
 import { Box, IconButton, Button, Menu, MenuItem, Badge } from "@mui/material";
-import { ExpandMore } from "@mui/icons-material";
+import { ExpandMore, Login, Logout } from "@mui/icons-material";
 import { CurrencyContext } from "@/core/context/CurrencyContext";
 import { ThemeToggleContext } from "@/core/context/ThemeToggleContext";
 import { useCart } from "@/core/context/CartContext";
 import { useTheme } from "@mui/material/styles";
 import { CURRENCY_DATA } from "@/core/constants";
 import { useRouter } from "next/router";
+import { useAuth } from "@/core/context/AuthContext";
 
 const hoverStyle = {
   transition: "all 0.3s ease",
@@ -30,11 +31,17 @@ const NavbarRight = ({
   const theme = useTheme();
   const router = useRouter();
   const colorMode = useContext(ThemeToggleContext);
+  const { user, logout } = useAuth();
 
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
   const handleLogin = () => {
     router.push("/auth");
+  };
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
   };
 
   return (
@@ -89,14 +96,25 @@ const NavbarRight = ({
         </Badge>
       </IconButton>
 
-      <IconButton
-        color="inherit"
-        size="small"
-        sx={{ display: { xs: "none", sm: "flex" }, ...hoverStyle }}
-        onClick={handleLogin}
-      >
-        <i className="fa-solid fa-user" style={iconStyle}></i>
-      </IconButton>
+      {user ? (
+        <IconButton
+          color="inherit"
+          size="small"
+          sx={{ display: { xs: "none", sm: "flex" }, ...hoverStyle }}
+          onClick={handleLogout}
+        >
+          <Logout sx={iconStyle} />
+        </IconButton>
+      ) : (
+        <IconButton
+          color="inherit"
+          size="small"
+          sx={{ display: { xs: "none", sm: "flex" }, ...hoverStyle }}
+          onClick={handleLogin}
+        >
+          <Login sx={iconStyle} />
+        </IconButton>
+      )}
 
       <IconButton
         onClick={colorMode.toggleColorMode}

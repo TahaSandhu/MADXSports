@@ -1,7 +1,5 @@
-
 import { Schema, model } from "mongoose";
 import { IUser } from "./schema";
-
 
 const UserSchema = new Schema<IUser>(
   {
@@ -13,22 +11,21 @@ const UserSchema = new Schema<IUser>(
       lowercase: true,
     },
 
-    otp: {
+    role: {
       type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
 
-    otpExpires: {
-      type: Date,
-    },
+    otp: String,
+    otpExpires: Date,
 
     isVerified: {
       type: Boolean,
       default: false,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const UserModel = model<IUser>("User", UserSchema);

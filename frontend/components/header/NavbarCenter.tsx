@@ -2,6 +2,8 @@ import { Box, Button } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import { useState, useRef } from "react";
 import { CATEGORIES_DATA } from "@/core/constants";
+import { useAuth } from "@/core/context/AuthContext";
+import { useRouter } from "next/router";
 
 const hoverStyle = {
   transition: "all 0.3s ease",
@@ -12,6 +14,8 @@ const hoverStyle = {
 };
 
 const NavbarCenter = () => {
+  const { isAdmin } = useAuth();
+ const router = useRouter();
   return (
     <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
       {CATEGORIES_DATA.map((cat) =>
@@ -20,6 +24,19 @@ const NavbarCenter = () => {
         ) : (
           <SimpleButton key={cat.name} name={cat.name} />
         )
+      )}
+
+      {isAdmin && (
+        <Button
+          sx={{
+            color: "#ff1744",
+            fontWeight: "bold",
+            "&:hover": { opacity: 0.8 },
+          }}
+          onClick={() => (router.push("/dashboard"))}
+        >
+          Dashboard
+        </Button>
       )}
     </Box>
   );
@@ -111,10 +128,15 @@ const Dropdown = ({ category }: any) => {
     </>
   );
 };
+const SimpleButton = ({ name, url }: { name: string; url?: string }) => {
+  const router = useRouter();
 
-const SimpleButton = ({ name }: { name: string }) => {
   return (
-    <Button color="inherit" sx={hoverStyle}>
+    <Button
+      color="inherit"
+      sx={hoverStyle}
+      onClick={() => url && router.push(url)}
+    >
       {name}
     </Button>
   );
