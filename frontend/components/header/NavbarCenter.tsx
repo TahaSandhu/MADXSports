@@ -1,9 +1,21 @@
+"use client";
+
 import { Box, Button } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import { useState, useRef } from "react";
 import { CATEGORIES_DATA } from "@/core/constants";
 import { useAuth } from "@/core/context/AuthContext";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+
+type Category = {
+  name: string;
+  url?: string;
+  items?: string[];
+  sections?: {
+    title: string;
+    items: string[];
+  }[];
+};
 
 const hoverStyle = {
   transition: "all 0.3s ease",
@@ -15,14 +27,15 @@ const hoverStyle = {
 
 const NavbarCenter = () => {
   const { isAdmin } = useAuth();
- const router = useRouter();
+  const router = useRouter();
+
   return (
     <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-      {CATEGORIES_DATA.map((cat) =>
+      {CATEGORIES_DATA.map((cat: Category) =>
         cat.items || cat.sections ? (
           <Dropdown key={cat.name} category={cat} />
         ) : (
-          <SimpleButton key={cat.name} name={cat.name} />
+          <SimpleButton key={cat.name} name={cat.name} url={cat.url} />
         )
       )}
 
@@ -31,9 +44,8 @@ const NavbarCenter = () => {
           sx={{
             color: "#ff1744",
             fontWeight: "bold",
-            "&:hover": { opacity: 0.8 },
           }}
-          onClick={() => (router.push("/dashboard"))}
+          onClick={() => router.push("/dashboard")}
         >
           Dashboard
         </Button>
@@ -42,7 +54,7 @@ const NavbarCenter = () => {
   );
 };
 
-const Dropdown = ({ category }: any) => {
+const Dropdown = ({ category }: { category: Category }) => {
   const [open, setOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -54,9 +66,7 @@ const Dropdown = ({ category }: any) => {
   };
 
   const handleLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setOpen(false);
-    }, 200);
+    timeoutRef.current = setTimeout(() => setOpen(false), 200);
   };
 
   const sectionsToRender = category.sections
@@ -67,12 +77,14 @@ const Dropdown = ({ category }: any) => {
 
   return (
     <>
+      {/* Button */}
       <Box onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
         <Button color="inherit" endIcon={<ExpandMore />} sx={hoverStyle}>
           {category.name}
         </Button>
       </Box>
 
+      {/* Dropdown */}
       <Box
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
@@ -81,9 +93,8 @@ const Dropdown = ({ category }: any) => {
           top: 65,
           left: 0,
           width: "100%",
-          bgcolor: "#0f0d0dff",
-          color: "#ffffffff",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+          bgcolor: "#0f0d0d",
+          color: "#fff",
           py: 5,
           zIndex: 1200,
           opacity: open ? 1 : 0,
@@ -102,13 +113,13 @@ const Dropdown = ({ category }: any) => {
             gap: 6,
           }}
         >
-          {sectionsToRender.map((sec: any) => (
+          {sectionsToRender.map((sec) => (
             <Box key={sec.title}>
               <Box sx={{ fontWeight: "bold", mb: 1.5, color: "#ff1744" }}>
                 {sec.title}
               </Box>
 
-              {sec.items?.map((item: string) => (
+              {sec.items.map((item) => (
                 <Box
                   key={item}
                   sx={{
@@ -128,14 +139,23 @@ const Dropdown = ({ category }: any) => {
     </>
   );
 };
-const SimpleButton = ({ name, url }: { name: string; url?: string }) => {
+
+const SimpleButton = ({
+  name,
+  url,
+}: {
+  name: string;
+  url?: string;
+}) => {
   const router = useRouter();
 
   return (
     <Button
       color="inherit"
       sx={hoverStyle}
-      onClick={() => url && router.push(url)}
+      onClick={() => {
+        if (url) router.push(url);
+      }}
     >
       {name}
     </Button>

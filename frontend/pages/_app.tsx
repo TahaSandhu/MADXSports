@@ -1,14 +1,22 @@
+"use client";
+
 import React, { useState, useMemo } from "react";
 import type { AppProps } from "next/app";
 import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
+import { useRouter } from "next/router";
+
 import MainLayout from "@/core/layout/mainLayout";
+import DashboardLayout from "@/core/layout/dashboardLayout"; // 👈 create this
+
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+
 import { ThemeToggleContext } from "@/core/context/ThemeToggleContext";
 import { CurrencyProvider } from "@/core/context/CurrencyContext";
 import { CartProvider } from "@/core/context/CartContext";
 import { AuthProvider } from "@/core/context/AuthContext";
+import './index.css';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -19,15 +27,17 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const router = useRouter();
+
   const [mode, setMode] = useState<"light" | "dark">("dark");
 
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
+        setMode((prev) => (prev === "light" ? "dark" : "light"));
       },
     }),
-    [],
+    []
   );
 
   const theme = useMemo(
@@ -46,11 +56,15 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
               }),
         },
       }),
-    [mode],
+    [mode]
   );
 
-  const getLayout =
-    Component.getLayout ?? ((page) => <MainLayout>{page}</MainLayout>);
+  const getLayout = Component.getLayout ?? ((page: ReactElement) => {
+    if (router.pathname.startsWith("/dashboard")) {
+      return <DashboardLayout>{page}</DashboardLayout>;
+    }
+    return <MainLayout>{page}</MainLayout>;
+  });
 
   return (
     <AuthProvider>

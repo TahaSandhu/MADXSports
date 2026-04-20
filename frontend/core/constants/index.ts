@@ -279,7 +279,7 @@ export const CATEGORIES_DATA = [
   },
   {
     name: "Dashboard",
-    url: "/dashboard/dashboard",
+    url: "/dashboard",
   },
 ];
 
@@ -290,22 +290,43 @@ export const CURRENCY_DATA = [
   { code: "PKR", flag: "🇵🇰" },
 ];
 
+// export const HERO_SLIDES = [
+//   {
+//     title: "Fight Like a Champion",
+//     description: "Get the best gear for MMA, Boxing, and more.",
+//     image: "/images/man-shooter-header.jpeg",
+//   },
+//   {
+//     title: "Unleash Your Potential",
+//     description: "Top quality equipment for serious athletes.",
+//     image: "/images/man-shooter-header2.jpeg",
+//   },
+//   {
+//     title: "Train Harder",
+//     description: "Apparel that moves with you.",
+//     image: "/images/man-shooter2.jpeg",
+//   },
+// ];
+
 export const HERO_SLIDES = [
   {
-    title: "Fight Like a Champion",
-    description: "Get the best gear for MMA, Boxing, and more.",
+    title: "Unleash Your Inner Fighter",
+    description: "Train like a champion with elite MMA techniques, strength, and endurance programs.",
     image: "/images/man-shooter-header.jpeg",
+    tag: "MMA Fighting"
   },
   {
-    title: "Unleash Your Potential",
-    description: "Top quality equipment for serious athletes.",
+    title: "Combat Intelligence & Strategy",
+    description: "Master fight IQ, timing, and precision with advanced mixed martial arts training.",
     image: "/images/man-shooter-header2.jpeg",
+    tag: "MMA Training"
   },
   {
-    title: "Train Harder",
-    description: "Apparel that moves with you.",
+    title: "Strength, Discipline, Victory",
+    description: "Build power, resilience, and mindset required to dominate in the cage.",
     image: "/images/man-shooter2.jpeg",
-  },
+    tag: "Fight Club"
+  }
 ];
 
 export const DUMMY_PRODUCTS = [
