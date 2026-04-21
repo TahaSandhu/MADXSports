@@ -1,14 +1,18 @@
 import ProductList from "@/components/product";
-import ScrollableProductSection from "@/components/product/ScrollableProductSection";
-import TrendingCarousel from "@/components/product/trending-slider";
+import TrendingBar from "@/components/trending-bar";
+import TrendingCarousel from "@/components/trending-bar/trendingcards";
 import { NEW_RELEASES } from "@/core/constants";
+import { useProducts } from "@/hooks/useProduct";
 
 const IndexPage = () => {
+  const { products } = useProducts();
+
   return (
     <>
-      <TrendingCarousel />
+      <TrendingBar />
+      <TrendingCarousel products={products} title="Trending Now" />
       <ProductList />
-      <ScrollableProductSection title="New Releases" products={NEW_RELEASES} />
+      <TrendingCarousel products={NEW_RELEASES} title="New Releases" />
     </>
   );
 };

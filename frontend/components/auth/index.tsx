@@ -63,7 +63,10 @@ export default function SignInPage() {
     setError(null);
     try {
       const res = await api.post("/auth/verify-otp", { email, otp: data.otp });
-      if (res.data.user) router.push("/");
+      if (res.data.user) {
+        // router.push("/");
+console.log("t1 response", res.data);
+      };
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid OTP. Please try again.");
     } finally {
@@ -134,8 +137,8 @@ export default function SignInPage() {
             <Box sx={{ textAlign: "center", mb: 4 }}>
               <Box
                 sx={{
-                  width: 60,
-                  height: 60,
+                  width: 100,
+                  height: 80,
                   margin: "0 auto 16px",
                   borderRadius: 2,
                   display: "flex",
@@ -147,7 +150,7 @@ export default function SignInPage() {
                   component="img"
                   src="/logoH.png"
                   alt="Logo"
-                  sx={{ height: 60, cursor: "pointer" }}
+                  sx={{cursor: "pointer", width: "100%", height: "100%",}}
                   onClick={handleLogoClick}
                 />
               </Box>

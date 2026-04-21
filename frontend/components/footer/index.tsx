@@ -23,7 +23,7 @@ const Footer = () => {
         borderTop: "1px solid rgba(255,255,255,0.05)",
       }}
     >
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Grid container spacing={4} sx={{ justifyContent: "space-between" }}>
           <Grid size={{ xs: 12, sm: 4 }}>
             <Box
@@ -46,7 +46,7 @@ const Footer = () => {
                 gutterBottom
                 sx={{ fontWeight: "bold" }}
               >
-                Contact Us
+                Addresses
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                 <strong>UK Office:</strong>

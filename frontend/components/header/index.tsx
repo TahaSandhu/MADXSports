@@ -6,6 +6,7 @@ import NavbarLeft from "./NavbarLeft";
 import NavbarCenter from "./NavbarCenter";
 import NavbarRight from "./NavbarRight";
 import MobileDrawer from "./MobileDrawer";
+import TrendingBar from "../trending-bar";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);

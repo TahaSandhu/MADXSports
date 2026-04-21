@@ -36,7 +36,7 @@ const NavbarRight = ({
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
   const handleLogin = () => {
-    router.push("/auth");
+    router.push("/signin");
   };
 
   const handleLogout = () => {

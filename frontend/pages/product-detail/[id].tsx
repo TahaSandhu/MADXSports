@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/router";
 import { Box, Typography } from "@mui/material";
 import ProductDetailComponent from "@/components/product-detail";
-import TrendingCarousel from "@/components/product/TrendingCarousel";
 import { DUMMY_PRODUCTS, TRENDING_PRODUCTS, NEW_RELEASES } from "@/core/constants";
 
 const ProductDetailPage = () => {
@@ -43,7 +42,7 @@ const ProductDetailPage = () => {
         <ProductDetailComponent product={product} />
         
         <Box sx={{ mt: 10, pb: 10 }}>
-          <TrendingCarousel />
+          {/* <TrendingCarousel /> */}
         </Box>
       </Box>
   );
