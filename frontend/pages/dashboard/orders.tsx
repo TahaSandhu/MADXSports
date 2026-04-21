@@ -1,8 +1,9 @@
+import ProductForm from "@/components/dashboard/productForm";
 import DashboardLayout from "@/core/layout/dashboardLayout";
 import type { ReactElement } from "react";
 
 const Orders = () => {
-//   return <OrdersManagement />;
+  return <ProductForm />;
 };
 
 Orders.getLayout = function (page: ReactElement) {

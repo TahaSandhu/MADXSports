@@ -10,7 +10,7 @@ const IndexPage = () => {
   return (
     <>
       <TrendingBar />
-      <TrendingCarousel products={products} title="Trending Now" />
+      <TrendingCarousel products={NEW_RELEASES} title="Trending Now" />
       <ProductList />
       <TrendingCarousel products={NEW_RELEASES} title="New Releases" />
     </>

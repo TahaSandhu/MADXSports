@@ -310,15 +310,21 @@ export const CURRENCY_DATA = [
 
 export const HERO_SLIDES = [
   {
+    title: "HUSSTLE WITH MADNESS",
+    description: "Train like a champion with MADX Products, strength, and endurance programs.",
+    image: "/headgard/hg1-golden-premium.jpeg",
+    tag: "MADX Sports"
+  },
+  {
     title: "Unleash Your Inner Fighter",
-    description: "Train like a champion with elite MMA techniques, strength, and endurance programs.",
-    image: "/images/man-shooter-header.jpeg",
+    description: "Train like a champion with MADX Products, strength, and endurance programs.",
+    image: "/shootergloves/gl2-standing-black.jpeg",
     tag: "MMA Fighting"
   },
   {
     title: "Combat Intelligence & Strategy",
     description: "Master fight IQ, timing, and precision with advanced mixed martial arts training.",
-    image: "/images/man-shooter-header2.jpeg",
+    image: "/belts/bl1-purple.jpeg",
     tag: "MMA Training"
   },
   {
@@ -484,6 +490,34 @@ export const NEW_RELEASES = [
   },
   {
     id: 204,
+    name: "shooter gloves black",
+    image: "/shootergloves/gl3-standing-black+red.jpeg",
+    description: "Keeps your supplements cold for up to 12 hours.",
+    isDiscription: true,
+  },
+    {
+    id: 205,
+    name: "Sparring Gloves",
+    image: "/shootergloves/gl-standing-golden.jpeg",
+    description: "Hybrid Series",
+    isDiscription: true,
+  },
+  {
+    id: 206,
+    name: "shooter gloves innerface",
+    image: "/shootergloves/gl1-innerface-golden.jpeg",
+    description: "shooter gloves innerface golden color combination",
+    isDiscription: true,
+  },
+  {
+    id: 207,
+    name: "shooter gloves black",
+    image: "/shootergloves/gl1-black.jpeg",
+    description: "Sharpen your footwork with our latest Pro-Series ladder.",
+    isDiscription: true,
+  },
+  {
+    id: 208,
     name: "shooter gloves black",
     image: "/shootergloves/gl3-standing-black+red.jpeg",
     description: "Keeps your supplements cold for up to 12 hours.",

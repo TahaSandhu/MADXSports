@@ -53,16 +53,6 @@ const Footer = () => {
                 <br />
                 246 Beechwood Road, Luton, UK
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                <strong>Manufacturing Unit 1:</strong>
-                <br />
-                UC New Adalat Garh Mohal Kingra, Sialkot
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                <strong>Manufacturing Unit 2:</strong>
-                <br />
-                Sheikhupura Road, Faisalabad
-              </Typography>
             </Box>
             <Box sx={{ display: "flex", gap: 2 }}>
               <IconButton

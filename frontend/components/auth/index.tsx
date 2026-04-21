@@ -137,8 +137,8 @@ console.log("t1 response", res.data);
             <Box sx={{ textAlign: "center", mb: 4 }}>
               <Box
                 sx={{
-                  width: 100,
-                  height: 80,
+                  width: 140,
+                  height: 100,
                   margin: "0 auto 16px",
                   borderRadius: 2,
                   display: "flex",

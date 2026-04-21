@@ -65,10 +65,6 @@ const HeroCarousel = () => {
               </p>
 
               <div className="mt-12 flex items-center gap-4">
-                <button className="px-8 py-4 bg-white text-black text-sm font-semibold uppercase tracking-wider rounded-full hover:bg-neutral-200 transition-colors">
-                  Get Started
-                </button>
-
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handlePrev}
