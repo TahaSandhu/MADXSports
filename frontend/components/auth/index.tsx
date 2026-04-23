@@ -22,7 +22,7 @@ import {
   Lock as LockIcon,
   ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
-import api from "@/lib/api";
+import { useSendOtp, useVerifyOtp } from "@/hooks/useAuth";
 
 type EmailForm = { email: string };
 type OtpForm = { otp: string };
@@ -30,52 +30,34 @@ type OtpForm = { otp: string };
 export default function SignInPage() {
   const router = useRouter();
   const [step, setStep] = useState<"email" | "otp">("email");
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { sendOtp, loading: sendLoading } = useSendOtp();
+  const { verifyOtp, loading: verifyLoading } = useVerifyOtp();
+
+  const emailForm = useForm<EmailForm>();
+  const otpForm = useForm<OtpForm>();
+
+  const emailValue = emailForm.watch("email");
 
   const handleLogoClick = () => {
     router.push("/");
   };
 
-  const emailForm = useForm<EmailForm>();
-  const otpForm = useForm<OtpForm>();
-
-  const sendOtp = async (data: EmailForm) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await api.post("/auth/send-otp", { email: data.email });
-      setEmail(data.email);
-      setStep("otp");
-      emailForm.reset();
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message || "Failed to send OTP. Please try again.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const verifyOtp = async (data: OtpForm) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await api.post("/auth/verify-otp", { email, otp: data.otp });
-      if (res.data.user) {
-        // router.push("/");
-console.log("t1 response", res.data);
-      };
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid OTP. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const googleLogin = () => {
     window.location.href = "/api/auth/google";
+  };
+
+  const handleSendOtp = async (data: EmailForm) => {
+    await sendOtp(data.email);
+    setStep("otp");
+  };
+
+  const handleVerifyOtp = async (data: OtpForm) => {
+    const result = await verifyOtp(emailValue, data.otp);
+    if (result) {
+      router.push("/");
+    }
   };
 
   const handleBackToEmail = () => {
@@ -150,16 +132,18 @@ console.log("t1 response", res.data);
                   component="img"
                   src="/logoH.png"
                   alt="Logo"
-                  sx={{cursor: "pointer", width: "100%", height: "100%",}}
+                  sx={{ cursor: "pointer", width: "100%", height: "100%" }}
                   onClick={handleLogoClick}
                 />
               </Box>
+
               <Typography
                 variant="h4"
                 sx={{ fontWeight: 700, color: "#ffffff" }}
               >
                 Welcome Back
               </Typography>
+
               <Typography variant="body2" sx={{ mt: 1, color: "#b0b0b0" }}>
                 Sign in to continue to your account
               </Typography>
@@ -210,7 +194,7 @@ console.log("t1 response", res.data);
 
             <Fade in={step === "email"} unmountOnExit>
               <Box>
-                <form onSubmit={emailForm.handleSubmit(sendOtp)}>
+                <form onSubmit={emailForm.handleSubmit(handleSendOtp)}>
                   <TextField
                     fullWidth
                     label="Email Address"
@@ -224,7 +208,7 @@ console.log("t1 response", res.data);
                     })}
                     error={!!emailForm.formState.errors.email}
                     helperText={emailForm.formState.errors.email?.message}
-                    disabled={loading}
+                    disabled={sendLoading}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -251,11 +235,12 @@ console.log("t1 response", res.data);
                       "& .MuiFormHelperText-root": { color: "#ff4444" },
                     }}
                   />
+
                   <Button
                     fullWidth
                     type="submit"
                     variant="contained"
-                    disabled={loading}
+                    disabled={sendLoading}
                     sx={{
                       py: 1.5,
                       borderRadius: 2,
@@ -269,7 +254,7 @@ console.log("t1 response", res.data);
                       },
                     }}
                   >
-                    {loading ? (
+                    {sendLoading ? (
                       <CircularProgress size={24} sx={{ color: "#ffffff" }} />
                     ) : (
                       "Send OTP"
@@ -284,18 +269,20 @@ console.log("t1 response", res.data);
                 <IconButton
                   onClick={handleBackToEmail}
                   sx={{ mb: 2, color: "#ff4444" }}
-                  disabled={loading}
+                  disabled={verifyLoading}
                 >
                   <ArrowBackIcon />
                 </IconButton>
+
                 <Typography
                   variant="body2"
                   sx={{ mb: 2, textAlign: "center", color: "#b0b0b0" }}
                 >
                   Enter the 6-digit code sent to{" "}
-                  <strong style={{ color: "#ff4444" }}>{email}</strong>
+                  <strong style={{ color: "#ff4444" }}>{emailValue}</strong>
                 </Typography>
-                <form onSubmit={otpForm.handleSubmit(verifyOtp)}>
+
+                <form onSubmit={otpForm.handleSubmit(handleVerifyOtp)}>
                   <TextField
                     fullWidth
                     label="Verification Code"
@@ -310,7 +297,7 @@ console.log("t1 response", res.data);
                     })}
                     error={!!otpForm.formState.errors.otp}
                     helperText={otpForm.formState.errors.otp?.message}
-                    disabled={loading}
+                    disabled={verifyLoading}
                     slotProps={{
                       input: {
                         sx: {
@@ -345,11 +332,12 @@ console.log("t1 response", res.data);
                       "& .MuiFormHelperText-root": { color: "#ff4444" },
                     }}
                   />
+
                   <Button
                     fullWidth
                     type="submit"
                     variant="contained"
-                    disabled={loading}
+                    disabled={verifyLoading}
                     sx={{
                       py: 1.5,
                       borderRadius: 2,
@@ -363,7 +351,7 @@ console.log("t1 response", res.data);
                       },
                     }}
                   >
-                    {loading ? (
+                    {verifyLoading ? (
                       <CircularProgress size={24} sx={{ color: "#ffffff" }} />
                     ) : (
                       "Verify & Sign In"

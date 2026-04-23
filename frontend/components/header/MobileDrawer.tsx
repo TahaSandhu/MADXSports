@@ -23,10 +23,19 @@ const hoverStyle = {
 const MobileDrawer = ({
   open,
   onClose,
+  isAdmin
 }: {
   open: boolean;
   onClose: () => void;
+  isAdmin: boolean;
 }) => {
+  const filteredCategories = CATEGORIES_DATA.filter(cat => {
+    if (cat.name === "Dashboard" && !isAdmin) {
+      return false;
+    }
+    return true;
+  });
+
   return (
     <Drawer open={open} onClose={onClose} ModalProps={{ disableScrollLock: true }}>
       <Box
@@ -54,7 +63,7 @@ const MobileDrawer = ({
         </Typography>
 
         <List>
-          {CATEGORIES_DATA.map((cat) => (
+          {filteredCategories.map((cat) => (
             <Dropdown key={cat.name} category={cat} />
           ))}
         </List>

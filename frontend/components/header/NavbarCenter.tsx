@@ -25,8 +25,7 @@ const hoverStyle = {
   },
 };
 
-const NavbarCenter = () => {
-  const { isAdmin } = useAuth();
+const NavbarCenter = ({ isAdmin }: { isAdmin: boolean }) => {
   const router = useRouter();
 
   return (

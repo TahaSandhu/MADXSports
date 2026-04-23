@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
@@ -12,37 +13,41 @@ type AuthContextType = {
   login: (user: User, token: string) => void;
   logout: () => void;
   isAdmin: boolean;
+  setToken: (token: string | null) => void;
+  setUser: (user: User | null) => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({ children }: any) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-
+  const  router = useRouter();
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
 
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedToken) setToken(storedToken);
   }, []);
+
+  useEffect(() => {
+    if (user) localStorage.setItem("user", JSON.stringify(user));
+    else localStorage.removeItem("user");
+
+    if (token) localStorage.setItem("token", token);
+    else localStorage.removeItem("token");
+  }, [user, token]);
 
   const login = (userData: User, jwt: string) => {
     setUser(userData);
     setToken(jwt);
-
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", jwt);
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    router.push("/signin");
   };
 
   return (
@@ -53,6 +58,8 @@ export const AuthProvider = ({ children }: any) => {
         login,
         logout,
         isAdmin: user?.role === "admin",
+        setToken,
+        setUser,
       }}
     >
       {children}

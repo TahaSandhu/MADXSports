@@ -1,4 +1,3 @@
-import CustomersManagement from "@/components/dashboard/Customers";
 import DashboardLayout from "@/core/layout/dashboardLayout";
 import type { ReactElement } from "react";
 

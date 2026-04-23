@@ -1,14 +1,16 @@
-
 export const CATEGORIES_DATA = [
   {
     name: "Boxing",
+    url: "/boxing",
     sections: [
       {
         title: "Approved Ranges",
+        url: "/boxing/approved-ranges",
         items: ["IBA Approved Boxing Range"],
       },
       {
         title: "Boxing Gloves",
+        url: "/boxing/boxing-gloves",
         items: [
           "Competition Gloves",
           "Sparring Gloves",
@@ -21,6 +23,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Punch Bags",
+        url: "/boxing/punch-bags",
         items: [
           "Training Punching Bags",
           "Punching Bags & Mitts Sets",
@@ -35,6 +38,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Coaching Equipment",
+        url: "/boxing/coaching-equipment",
         items: [
           "Focus Pads",
           "Paddles Mitts",
@@ -45,6 +49,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Protective Gear",
+        url: "/boxing/protective-gear",
         items: [
           "Hand Wraps & Inner Gloves",
           "Head Gear",
@@ -58,6 +63,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Training Equipment",
+        url: "/boxing/training-equipment",
         items: [
           "Jump Ropes",
           "Pull Up Bars",
@@ -68,6 +74,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Apparel",
+        url: "/boxing/apparel",
         items: [
           "Boxing Trunks",
           "Compression Wear",
@@ -80,13 +87,16 @@ export const CATEGORIES_DATA = [
   },
   {
     name: "MMA",
+    url: "/mma",
     sections: [
       {
         title: "Approved Ranges",
+        url: "/mma/approved-ranges",
         items: ["IMMAF Approved Range", "WAKO Approved Range"],
       },
       {
         title: "MMA Gloves",
+        url: "/mma/gloves",
         items: [
           "Sparring Gloves",
           "Training Gloves",
@@ -96,6 +106,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "MMA Punch Bags",
+        url: "/mma/punch-bags",
         items: [
           "MMA Training Punching Bags",
           "MMA Punching Bags & Mitts Sets",
@@ -109,6 +120,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Coaching Equipment",
+        url: "/mma/coaching-equipment",
         items: [
           "Focus Mitts",
           "Kicking Shields",
@@ -119,6 +131,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Protective Gear",
+        url: "/mma/protective-gear",
         items: [
           "Hand Wraps & Inner Gloves",
           "Head Gear",
@@ -132,6 +145,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Training Equipment",
+        url: "/mma/training-equipment",
         items: [
           "Jump Ropes",
           "Pull Up Bars",
@@ -142,23 +156,28 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Apparel",
+        url: "/mma/apparel",
         items: ["MMA Shorts", "Compression Wear", "Sauna Suits", "View All"],
       },
       {
         title: "Equipment Bags",
+        url: "/mma/equipment-bags",
         items: ["Equipment Bags", "View All"],
       },
     ],
   },
   {
     name: "Muay Thai",
+    url: "/muay-thai",
     items: ["Weights", "Jump Ropes", "Resistance Bands"],
   },
   {
     name: "Fitness",
+    url: "/fitness",
     sections: [
       {
         title: "Gym Gloves",
+        url: "/fitness/gym-gloves",
         items: [
           "Fitness & Workout",
           "Training & Gym",
@@ -168,6 +187,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Weightlifting Belts",
+        url: "/fitness/weightlifting-belts",
         items: [
           "Leather Belts",
           "Training Belts",
@@ -178,6 +198,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Weightlifting Gear",
+        url: "/fitness/weightlifting-gear",
         items: [
           "Weightlifting Grips & Straps",
           "Arm Blaster",
@@ -188,6 +209,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Strength Training",
+        url: "/fitness/strength-training",
         items: [
           "Pull Up Bars",
           "Jump Ropes",
@@ -199,6 +221,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Stability & Mobility",
+        url: "/fitness/stability-mobility",
         items: [
           "Ab Rollers",
           "Aerobic Step",
@@ -210,6 +233,7 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Braces & Support",
+        url: "/fitness/braces-support",
         items: [
           "Elbow Support",
           "Back support",
@@ -221,23 +245,28 @@ export const CATEGORIES_DATA = [
       },
       {
         title: "Gym Essentials",
+        url: "/fitness/gym-essentials",
         items: ["Sauna Suits", "Compression Wear", "Equipment Bags", "View All"],
       },
     ],
   },
   {
     name: "Apparel",
+    url: "/apparel",
     sections: [
       {
         title: "Active Wear",
+        url: "/apparel/active-wear",
         items: ["T-Shirts", "Trousers", "Vest", "View All"],
       },
       {
         title: "Compression Wear & Shorts",
+        url: "/apparel/compression-shorts",
         items: ["MMA Shorts", "Compression Shorts & Pants", "Sweatshirts", "View All"],
       },
       {
         title: "Sauna Range",
+        url: "/apparel/sauna-range",
         items: [
           "Sauna Suits",
           "Sauna Vests",
@@ -251,9 +280,11 @@ export const CATEGORIES_DATA = [
   },
   {
     name: "Kids",
+    url: "/kids",
     sections: [
       {
         title: "Kids",
+        url: "/kids/products",
         items: [
           "Kids Boxing Sets",
           "Kids Boxing Gloves",
@@ -268,14 +299,17 @@ export const CATEGORIES_DATA = [
   },
   {
     name: "Jiujitsu",
+    url: "/jiujitsu",
     items: ["Gi kiminos", "Karate suit", "Taekwondo suit", "Belts"],
   },
   {
     name: "Gothic",
+    url: "/gothic",
     items: ["Mats", "Blocks", "Apparel"],
   },
   {
     name: "Contact",
+    url: "/contact",
   },
   {
     name: "Dashboard",
@@ -289,24 +323,6 @@ export const CURRENCY_DATA = [
   { code: "GBP", flag: "🇬🇧" },
   { code: "PKR", flag: "🇵🇰" },
 ];
-
-// export const HERO_SLIDES = [
-//   {
-//     title: "Fight Like a Champion",
-//     description: "Get the best gear for MMA, Boxing, and more.",
-//     image: "/images/man-shooter-header.jpeg",
-//   },
-//   {
-//     title: "Unleash Your Potential",
-//     description: "Top quality equipment for serious athletes.",
-//     image: "/images/man-shooter-header2.jpeg",
-//   },
-//   {
-//     title: "Train Harder",
-//     description: "Apparel that moves with you.",
-//     image: "/images/man-shooter2.jpeg",
-//   },
-// ];
 
 export const HERO_SLIDES = [
   {

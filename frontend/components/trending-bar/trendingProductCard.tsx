@@ -3,10 +3,9 @@ import { Card, CardMedia, CardContent, Typography, Box, Button, Rating } from '@
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { Product } from '@/hooks/useProduct';
 
 interface ProductCardProps {
-  product: Product;
+  product: any;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {

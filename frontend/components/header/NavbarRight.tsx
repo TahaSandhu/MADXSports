@@ -22,16 +22,18 @@ const iconStyle = { fontSize: "0.9rem" };
 const NavbarRight = ({
   onSearch,
   onCart,
+  isToken,
 }: {
   onSearch: () => void;
   onCart: () => void;
+  isToken: boolean;
 }) => {
   const { currency, setCurrency } = useContext(CurrencyContext);
   const { totalItems } = useCart();
   const theme = useTheme();
   const router = useRouter();
   const colorMode = useContext(ThemeToggleContext);
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
 
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
@@ -96,7 +98,7 @@ const NavbarRight = ({
         </Badge>
       </IconButton>
 
-      {user ? (
+      {isToken ? (
         <IconButton
           color="inherit"
           size="small"

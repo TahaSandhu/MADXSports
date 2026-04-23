@@ -1,17 +1,14 @@
 "use client";
-
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import type { AppProps } from "next/app";
 import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
 import { useRouter } from "next/router";
-
+import { Toaster } from "react-hot-toast";
 import MainLayout from "@/core/layout/mainLayout";
-import DashboardLayout from "@/core/layout/dashboardLayout"; // 👈 create this
-
+import DashboardLayout from "@/core/layout/dashboardLayout";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-
 import { ThemeToggleContext } from "@/core/context/ThemeToggleContext";
 import { CurrencyProvider } from "@/core/context/CurrencyContext";
 import { CartProvider } from "@/core/context/CartContext";
@@ -73,6 +70,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           <CssBaseline />
           <CurrencyProvider>
             <CartProvider>
+               <Toaster position="top-right" />
               {getLayout(<Component {...pageProps} />)}
             </CartProvider>
           </CurrencyProvider>

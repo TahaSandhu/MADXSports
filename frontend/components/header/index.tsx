@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppBar, Toolbar } from "@mui/material";
 import SearchModal from "@/components/search/SearchModal";
 import CartDrawer from "@/components/cart/CartDrawer";
@@ -7,12 +7,16 @@ import NavbarCenter from "./NavbarCenter";
 import NavbarRight from "./NavbarRight";
 import MobileDrawer from "./MobileDrawer";
 import TrendingBar from "../trending-bar";
+import { useAuth } from "@/core/context/AuthContext";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const { user, token } = useAuth();
 
+  const isAdmin = user?.role === "admin";
+  console.log("t1 User:", {user, token, isAdmin});
   return (
     <>
       <AppBar
@@ -32,17 +36,18 @@ const Navbar = () => {
           }}
         >
           <NavbarLeft onMenuClick={() => setDrawerOpen(true)} />
-          <NavbarCenter />
+           <NavbarCenter isAdmin={isAdmin} />
           <NavbarRight
             onSearch={() => setSearchOpen(true)}
             onCart={() => setCartOpen(true)}
+            isToken={!!token}
           />
         </Toolbar>
       </AppBar>
 
       <Toolbar />
 
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} isAdmin={isAdmin} />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
