@@ -6,6 +6,7 @@ import { Product } from './types';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CREATE_URL = `${API_URL}/products/create`;
 const GET_URL = `${API_URL}/products/allProducts`;
+const UPDATE_URL = `${API_URL}/products/update`;
 
 const MOCK_PRODUCTS: any[] = Array.from({ length: 50 }, (_, i) => ({
   id: `${i + 1}`,
@@ -61,7 +62,7 @@ export const useProduct = () => {
 
   const updateProduct = async (id: string, data: Product) => {
     try {
-      const res = await axios.put(`${GET_URL}/${id}`, data);
+      const res = await axios.put(`${UPDATE_URL}/${id}`, data);
       return res.data;
     } catch (error: any) {
       throw new Error(error?.response?.data?.message || "Error updating product");

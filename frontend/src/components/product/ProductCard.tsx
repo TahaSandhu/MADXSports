@@ -57,7 +57,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             {getPrice(product.price)}
           </Typography>
 
-          <Typography
+          {/* <Typography
             variant="body2"
             sx={{
               display: "-webkit-box",
@@ -68,7 +68,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             }}
           >
             {product.description}
-          </Typography>
+          </Typography> */}
         </CardContent>
 
         <CardActions>

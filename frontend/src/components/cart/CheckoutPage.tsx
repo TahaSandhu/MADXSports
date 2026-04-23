@@ -1,6 +1,6 @@
-// app/checkout/page.tsx
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import * as yup from "yup";
 import {
   Elements,
   CardElement,
@@ -9,7 +9,6 @@ import {
 } from "@stripe/react-stripe-js";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useCart } from "@/core/context/CartContext";
 import { CurrencyContext } from "@/core/context/CurrencyContext";
 import {
@@ -44,23 +43,10 @@ import {
   ArrowForward,
   ShoppingBag,
 } from "@mui/icons-material";
+import { checkoutSchema } from "./resolver";
+import { useCheckout } from "@/hooks/checkout";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
-// Validation schema
-const checkoutSchema = yup.object({
-  email: yup.string().email("Invalid email").required("Email is required"),
-  firstName: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
-  address: yup.string().required("Address is required"),
-  apartment: yup.string(),
-  city: yup.string().required("City is required"),
-  state: yup.string().required("State is required"),
-  postalCode: yup.string().required("Postal code is required"),
-  country: yup.string().required("Country is required"),
-  phone: yup.string().required("Phone number is required"),
-  saveInfo: yup.boolean(),
-});
 
 type CheckoutFormData = yup.InferType<typeof checkoutSchema>;
 
@@ -68,20 +54,18 @@ const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const { cartItems } = useCart();
-  const { currency } = React.useContext(CurrencyContext);
-  const [clientSecret, setClientSecret] = useState("");
+  const { currency } = useContext(CurrencyContext);
   const [activeStep, setActiveStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-
+  const { createOrder } = useCheckout();
   const {
     control,
     handleSubmit,
     formState: { errors },
     watch,
     setValue,
-    getValues,
   } = useForm({
     resolver: yupResolver(checkoutSchema),
     defaultValues: {
@@ -117,26 +101,6 @@ const CheckoutForm = () => {
     if (!price) return 0;
     return parseFloat(String(price).replace(/[^0-9.]/g, ""));
   };
-
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      fetch("http://localhost:8080/api/v1/payment/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: cartItems.map((item) => ({
-            name: item.name,
-            price: getNumericPrice(item.price),
-            quantity: item.quantity,
-            size: item.size,
-            color: item.color,
-          })),
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => setClientSecret(data.clientSecret));
-    }
-  }, [cartItems]);
 
   const calculateSubtotal = () => {
     return cartItems.reduce((acc, item) => {
@@ -188,59 +152,73 @@ const CheckoutForm = () => {
     setActiveStep((prev) => prev - 1);
   };
 
-  const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
-    if (!stripe || !elements || !clientSecret) {
-      setPaymentError("Payment system not ready");
-      return;
-    }
+const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
+  if (!stripe || !elements) {
+    setPaymentError("Payment system not ready");
+    return;
+  }
 
-    setIsProcessing(true);
-    setPaymentError(null);
+  setIsProcessing(true);
+  setPaymentError(null);
 
-    if (data.saveInfo) {
-      const infoToSave = {
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone,
-      };
-      localStorage.setItem("checkoutInfo", JSON.stringify(infoToSave));
-    }
+  try {
+    const orderResponse = await createOrder({
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phone: data.phone,
+      address: data.address,
+      apartment: data.apartment,
+      city: data.city,
+      state: data.state,
+      postalCode: data.postalCode,
+      country: data.country,
+      items: cartItems.map((item) => ({
+        name: item.name,
+        price: getNumericPrice(item.price),
+        quantity: item.quantity,
+        size: item.size,
+        color: item.color,
+      })),
+      subtotal: calculateSubtotal(),
+      shipping: calculateShipping(),
+      tax: calculateTax(),
+      total: calculateTotal(),
+    });
 
-    try {
-      const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement)!,
-          billing_details: {
-            name: `${data.firstName} ${data.lastName}`,
-            email: data.email,
-            phone: data.phone,
-            address: {
-              line1: data.address,
-              line2: data.apartment,
-              city: data.city,
-              state: data.state,
-              postal_code: data.postalCode, // Fixed: changed from postalCode to postal_code
-              country: data.country, // Now using valid ISO code (e.g., 'US', 'GB', 'PK')
-            },
+    const result = await stripe.confirmCardPayment(orderResponse.clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement)!,
+        billing_details: {
+          name: `${data.firstName} ${data.lastName}`,
+          email: data.email,
+          phone: data.phone,
+          address: {
+            line1: data.address,
+            line2: data.apartment,
+            city: data.city,
+            state: data.state,
+            postal_code: data.postalCode,
+            country: data.country,
           },
         },
-      });
+      },
+    });
 
-      if (result.error) {
-        setPaymentError(result.error.message || "Payment failed");
-      } else if (result.paymentIntent?.status === "succeeded") {
-        setPaymentSuccess(true);
-        setTimeout(() => {
-          window.location.href = "/success";
-        }, 2000);
-      }
-    } catch (error) {
-      setPaymentError("An unexpected error occurred");
-    } finally {
-      setIsProcessing(false);
+    if (result.error) {
+      setPaymentError(result.error.message || "Payment failed");
+    } else if (result.paymentIntent?.status === "succeeded") {
+      setPaymentSuccess(true);
+      setTimeout(() => {
+        window.location.href = "/success";
+      }, 2000);
     }
-  };
+  } catch {
+    setPaymentError("Something went wrong");
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
   if (cartItems.length === 0) {
     return (
@@ -567,7 +545,7 @@ const CheckoutForm = () => {
                 <Button
                   type="submit"
                   variant="contained"
-                  disabled={!stripe || !clientSecret || isProcessing}
+                  disabled={!stripe || isProcessing}
                   startIcon={isProcessing ? <CircularProgress size={20} /> : <Lock />}
                   sx={{
                     background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",

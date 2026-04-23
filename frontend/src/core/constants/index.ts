@@ -351,62 +351,6 @@ export const HERO_SLIDES = [
   }
 ];
 
-export const DUMMY_PRODUCTS = [
-  {
-    id: 1,
-    name: "Pro MMA Gloves",
-    price: "$59.99",
-    image: "/shootergloves/gl2-standing-black.jpeg",
-    rating: 4.5,
-    description:
-      "High quality genuine leather MMA gloves designed for sparring and competition.",
-  },
-  {
-    id: 2,
-    name: "Heavy Punching Bag",
-    price: "$129.99",
-    image: "/shootergloves/gl2-vertical-red.jpeg",
-    rating: 5.0,
-    description: "Durable heavy bag for intense striking and kicking drills.",
-  },
-  {
-    id: 3,
-    name: "Muay Thai Shin Guards",
-    price: "$79.99",
-    image: "/shootergloves/gl3-standing-black+red.jpeg",
-    rating: 4.0,
-    description:
-      "Provide maximum protection for your shins during intense Muay Thai sparring.",
-  },
-  {
-    id: 4,
-    name: "Boxing Headgear",
-    price: "$89.99",
-    image: "/shootergloves/gl-standing-golden.jpeg",
-    rating: 4.5,
-    description:
-      "Full-face protection headgear with excellent visibility and padding.",
-  },
-  {
-    id: 5,
-    name: "Weight lifting Belt",
-    price: "$79.99",
-    image: "/belts/bl-black.jpeg",
-    rating: 4.0,
-    description:
-      "Provide maximum protection for your shins during intense Muay Thai sparring.",
-  },
-  {
-    id: 6,
-    name: "Weight lifting Belt",
-    price: "$89.99",
-    image: "/belts/bl1-purple.jpeg",
-    rating: 4.5,
-    description:
-      "Full-face protection headgear with excellent visibility and padding.",
-  },
-];
-
 export const TRENDING_PRODUCTS = [
   {
     id: 101,
