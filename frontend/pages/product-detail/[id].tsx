@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Box, Typography, CircularProgress, Container } from "@mui/material";
 import ProductDetailComponent from "@/components/product-detail";
-import { ProductById } from "@/hooks/useProduct";
+import { useProduct } from "@/hooks/useProduct";
 
 const ProductDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { getProductById } = ProductById();
+  const { getProductById } = useProduct();
 
   useEffect(() => {
     const fetchProduct = async () => {

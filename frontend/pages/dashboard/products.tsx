@@ -1,10 +1,9 @@
-import ProductForm from "@/components/dashboard/productForm";
+import ProductTable from "@/components/dashboard/products/productData";
 import DashboardLayout from "@/core/layout/dashboardLayout";
 import type { ReactElement } from "react";
 
 const Products = () => {
-  return <ProductForm />;
-;
+  return <ProductTable />;
 };
 
 Products.getLayout = function (page: ReactElement) {

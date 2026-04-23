@@ -59,7 +59,25 @@ export const useProduct = () => {
     }
   };
 
-  return { createProduct };
+  const updateProduct = async (id: string, data: Product) => {
+    try {
+      const res = await axios.put(`${GET_URL}/${id}`, data);
+      return res.data;
+    } catch (error: any) {
+      throw new Error(error?.response?.data?.message || "Error updating product");
+    }
+  };
+
+  const getProductById = async (id: string) => {
+    try {
+      const res = await axios.get(`${GET_URL}/${id}`);
+      return res.data;
+    } catch (error: any) {
+      throw new Error(error?.response?.data?.message || "Error fetching product");
+    }
+  };
+
+  return { createProduct, updateProduct, getProductById };
 };
 
 export const useProductsApi = () => {
@@ -75,30 +93,4 @@ export const useProductsApi = () => {
   };
 
   return { getProducts };
-};
-
-export const ProductById = () => {
-  const getProductById = async (id: string) => {
-    try {
-      const res = await axios.get(`${GET_URL}/${id}`);
-      return res.data;
-    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Error fetching product");
-    }
-  };
-
-  return { getProductById };
-};
-
-export const updateProduct = () => {
-  const updateProduct = async (id: string, data: Product) => {
-    try {
-      const res = await axios.put(`${GET_URL}/${id}`, data);
-      return res.data;
-    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Error updating product");
-    }
-  };
-
-  return { updateProduct };
 };

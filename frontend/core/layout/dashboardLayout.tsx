@@ -1,18 +1,27 @@
 "use client";
 
-import { Box, Typography, List, ListItemButton, ListItemText } from "@mui/material";
+import { Box, Typography, List, ListItemButton, ListItemText, Collapse } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const menuItems = [
   { name: "Overview", path: "/dashboard" },
   { name: "Orders", path: "/dashboard/orders" },
-  { name: "Products", path: "/dashboard/products" },
+  { 
+    name: "Products", 
+    path: "/dashboard/products",
+    subItems: [
+      { name: "All Products", path: "/dashboard/products" },
+      { name: "Create Product", path: "/dashboard/products/create" },
+    ]
+  },
   { name: "Customers", path: "/dashboard/customers" },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const [productsOpen, setProductsOpen] = useState(true);
 
 //   useEffect(() => {
 //     const token = localStorage.getItem('token');
@@ -52,21 +61,64 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <List>
           {menuItems.map((item) => (
-            <ListItemButton
-              key={item.name}
-              onClick={() => router.push(item.path)}
-              sx={{
-                borderRadius: 2,
-                mb: 1,
-                color: "#ccc",
-                "&:hover": {
-                  bgcolor: "rgba(255, 23, 68, 0.1)",
-                  color: "#ff1744",
-                },
-              }}
-            >
-              <ListItemText primary={item.name} />
-            </ListItemButton>
+            <Box key={item.name}>
+              {item.subItems ? (
+                <>
+                  <ListItemButton
+                    onClick={() => setProductsOpen(!productsOpen)}
+                    sx={{
+                      borderRadius: 2,
+                      mb: 1,
+                      color: "#ccc",
+                      "&:hover": {
+                        bgcolor: "rgba(255, 23, 68, 0.1)",
+                        color: "#ff1744",
+                      },
+                    }}
+                  >
+                    <ListItemText primary={item.name} />
+                    {productsOpen ? <ExpandLess /> : <ExpandMore />}
+                  </ListItemButton>
+                  <Collapse in={productsOpen} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {item.subItems.map((subItem) => (
+                        <ListItemButton
+                          key={subItem.name}
+                          onClick={() => router.push(subItem.path)}
+                          sx={{
+                            pl: 4,
+                            borderRadius: 2,
+                            mb: 1,
+                            color: "#999",
+                            "&:hover": {
+                              bgcolor: "rgba(255, 23, 68, 0.05)",
+                              color: "#ff1744",
+                            },
+                          }}
+                        >
+                          <ListItemText primary={subItem.name} />
+                        </ListItemButton>
+                      ))}
+                    </List>
+                  </Collapse>
+                </>
+              ) : (
+                <ListItemButton
+                  onClick={() => router.push(item.path)}
+                  sx={{
+                    borderRadius: 2,
+                    mb: 1,
+                    color: "#ccc",
+                    "&:hover": {
+                      bgcolor: "rgba(255, 23, 68, 0.1)",
+                      color: "#ff1744",
+                    },
+                  }}
+                >
+                  <ListItemText primary={item.name} />
+                </ListItemButton>
+              )}
+            </Box>
           ))}
           <ListItemButton
             onClick={handleLogout}

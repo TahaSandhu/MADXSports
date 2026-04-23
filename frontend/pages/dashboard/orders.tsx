@@ -1,4 +1,4 @@
-import ProductForm from "@/components/dashboard/productForm";
+import ProductForm from "@/components/dashboard/products/productForm";
 import DashboardLayout from "@/core/layout/dashboardLayout";
 import type { ReactElement } from "react";
 
