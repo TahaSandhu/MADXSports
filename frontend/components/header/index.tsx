@@ -13,10 +13,7 @@ const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const { user, token } = useAuth();
-
-  const isAdmin = user?.role === "admin";
-  console.log("t1 User:", {user, token, isAdmin});
+  const { user, token, isAdmin } = useAuth();
   return (
     <>
       <AppBar
@@ -40,7 +37,6 @@ const Navbar = () => {
           <NavbarRight
             onSearch={() => setSearchOpen(true)}
             onCart={() => setCartOpen(true)}
-            isToken={!!token}
           />
         </Toolbar>
       </AppBar>

@@ -22,22 +22,37 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const  router = useRouter();
+  const router = useRouter();
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
 
-    if (storedUser) setUser(JSON.parse(storedUser));
-    if (storedToken) setToken(storedToken);
+    if (storedUser && storedUser !== "null" && storedUser !== "undefined") {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error("Failed to parse user from localStorage", e);
+      }
+    }
+    
+    if (storedToken && storedToken !== "null" && storedToken !== "undefined") {
+      setToken(storedToken);
+    }
+    
+    setIsInitialized(true);
   }, []);
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (user) localStorage.setItem("user", JSON.stringify(user));
     else localStorage.removeItem("user");
 
     if (token) localStorage.setItem("token", token);
     else localStorage.removeItem("token");
-  }, [user, token]);
+  }, [user, token, isInitialized]);
 
   const login = (userData: User, jwt: string) => {
     setUser(userData);

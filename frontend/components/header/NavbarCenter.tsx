@@ -28,9 +28,13 @@ const hoverStyle = {
 const NavbarCenter = ({ isAdmin }: { isAdmin: boolean }) => {
   const router = useRouter();
 
+  const filteredCategories = CATEGORIES_DATA.filter(
+    (cat) => cat.name !== "Dashboard"
+  );
+
   return (
     <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-      {CATEGORIES_DATA.map((cat: Category) =>
+      {filteredCategories.map((cat: Category) =>
         cat.items || cat.sections ? (
           <Dropdown key={cat.name} category={cat} />
         ) : (
