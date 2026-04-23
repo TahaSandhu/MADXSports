@@ -5,7 +5,7 @@ export type Variant = {
 };
 
 export type Product = {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   images: string[];

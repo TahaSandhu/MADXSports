@@ -1,26 +1,53 @@
-import React, { useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, CircularProgress, Container } from "@mui/material";
 import ProductDetailComponent from "@/components/product-detail";
-import { DUMMY_PRODUCTS, TRENDING_PRODUCTS, NEW_RELEASES } from "@/core/constants";
+import { ProductById } from "@/hooks/useProduct";
 
 const ProductDetailPage = () => {
   const router = useRouter();
   const { id } = router.query;
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { getProductById } = ProductById();
 
-  const product = useMemo(() => {
-    if (!id) return null;
-    
-    const allProducts = [...DUMMY_PRODUCTS, ...TRENDING_PRODUCTS, ...NEW_RELEASES];
-    
-    return allProducts.find((p) => String(p.id) === String(id));
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (id) {
+        try {
+          const res = await getProductById(id as string);
+          setProduct(res);
+        } catch (error) {
+          console.error("Error fetching product:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchProduct();
   }, [id]);
 
-  if (id && !product) {
+  if (loading) {
+    return (
+      <Box 
+        sx={{ 
+          bgcolor: "background.default", 
+          minHeight: "100vh", 
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center" 
+        }}
+      >
+        <CircularProgress color="primary" />
+      </Box>
+    );
+  }
+
+  if (!product) {
     return (
         <Box sx={{ 
           bgcolor: "background.default", 
-          minHeight: "70vh", 
+          minHeight: "100vh", 
           display: "flex", 
           flexDirection: "column",
           alignItems: "center", 

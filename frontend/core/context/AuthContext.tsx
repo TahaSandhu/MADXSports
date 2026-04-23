@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         token,
         login,
         logout,
-        isAdmin: user?.role === "admin",
+        isAdmin: user?.role?.toLowerCase().trim() === "admin",
         setToken,
         setUser,
       }}

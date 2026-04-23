@@ -78,7 +78,7 @@ export const useProductsApi = () => {
 };
 
 export const ProductById = () => {
-  const getProduct = async (id: string) => {
+  const getProductById = async (id: string) => {
     try {
       const res = await axios.get(`${GET_URL}/${id}`);
       return res.data;
@@ -87,7 +87,7 @@ export const ProductById = () => {
     }
   };
 
-  return { getProduct };
+  return { getProductById };
 };
 
 export const updateProduct = () => {

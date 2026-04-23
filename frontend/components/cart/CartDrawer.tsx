@@ -31,8 +31,14 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
   const router = useRouter();
   console.log("t1 cartItems: ", cartItems);
 
-  const formatPrice = (priceStr: string, qty: number) => {
-    const base = parseFloat(priceStr.replace("$", ""));
+  const getNumericPrice = (price: any) => {
+    if (typeof price === "number") return price;
+    if (!price) return 0;
+    return parseFloat(String(price).replace(/[^0-9.]/g, ""));
+  };
+
+  const formatPrice = (price: any, qty: number) => {
+    const base = getNumericPrice(price);
     const num = base * qty;
     switch (currency) {
       case "EUR":
@@ -50,7 +56,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
 
   const calculateTotal = () => {
     const totalBase = cartItems.reduce((acc, item) => {
-      return acc + parseFloat(item.price.replace("$", "")) * item.quantity;
+      return acc + getNumericPrice(item.price) * item.quantity;
     }, 0);
 
     switch (currency) {
@@ -111,13 +117,13 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
             </Box>
           ) : (
             cartItems.map((item) => (
-              <React.Fragment key={item.id}>
+              <React.Fragment key={`${item.id}-${item.size}-${item.color}`}>
                 <ListItem
                   alignItems="flex-start"
                   secondaryAction={
                     <IconButton
                       edge="end"
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.id, item.size, item.color)}
                       color="error"
                       size="small"
                     >
@@ -166,7 +172,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
                         >
                           <IconButton
                             size="small"
-                            onClick={() => updateQuantity(item.id, -1)}
+                            onClick={() => updateQuantity(item.id, -1, item.size, item.color)}
                           >
                             <RemoveIcon fontSize="inherit" />
                           </IconButton>
@@ -177,7 +183,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
 
                           <IconButton
                             size="small"
-                            onClick={() => updateQuantity(item.id, 1)}
+                            onClick={() => updateQuantity(item.id, 1, item.size, item.color)}
                           >
                             <AddIcon fontSize="inherit" />
                           </IconButton>

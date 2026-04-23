@@ -101,7 +101,6 @@ const CheckoutForm = () => {
 
   const watchedFields = watch();
 
-  // Load saved info
   useEffect(() => {
     const savedInfo = localStorage.getItem("checkoutInfo");
     if (savedInfo) {
@@ -113,7 +112,12 @@ const CheckoutForm = () => {
     }
   }, [setValue]);
 
-  // Create payment intent
+  const getNumericPrice = (price: any) => {
+    if (typeof price === "number") return price;
+    if (!price) return 0;
+    return parseFloat(String(price).replace(/[^0-9.]/g, ""));
+  };
+
   useEffect(() => {
     if (cartItems.length > 0) {
       fetch("http://localhost:8080/api/v1/payment/create-payment-intent", {
@@ -122,7 +126,7 @@ const CheckoutForm = () => {
         body: JSON.stringify({
           items: cartItems.map((item) => ({
             name: item.name,
-            price: Number(item.price.replace("$", "")),
+            price: getNumericPrice(item.price),
             quantity: item.quantity,
             size: item.size,
             color: item.color,
@@ -136,7 +140,7 @@ const CheckoutForm = () => {
 
   const calculateSubtotal = () => {
     return cartItems.reduce((acc, item) => {
-      return acc + parseFloat(item.price.replace("$", "")) * item.quantity;
+      return acc + getNumericPrice(item.price) * item.quantity;
     }, 0);
   };
 
@@ -193,7 +197,6 @@ const CheckoutForm = () => {
     setIsProcessing(true);
     setPaymentError(null);
 
-    // Save info if requested
     if (data.saveInfo) {
       const infoToSave = {
         email: data.email,
@@ -304,7 +307,7 @@ const CheckoutForm = () => {
                   />
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 6 }}> {/* Changed from item xs=6 */}
+                    <Grid size={{ xs: 6 }}>
                       <Controller
                         name="firstName"
                         control={control}
@@ -320,7 +323,7 @@ const CheckoutForm = () => {
                         )}
                       />
                     </Grid>
-                    <Grid size={{ xs: 6 }}> {/* Changed from item xs=6 */}
+                    <Grid size={{ xs: 6 }}>
                       <Controller
                         name="lastName"
                         control={control}
@@ -393,7 +396,7 @@ const CheckoutForm = () => {
                   />
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 6 }}> {/* Changed from item xs=6 */}
+                    <Grid size={{ xs: 6 }}>
                       <Controller
                         name="city"
                         control={control}
@@ -409,7 +412,7 @@ const CheckoutForm = () => {
                         )}
                       />
                     </Grid>
-                    <Grid size={{ xs: 6 }}> {/* Changed from item xs=6 */}
+                    <Grid size={{ xs: 6 }}> 
                       <Controller
                         name="state"
                         control={control}
@@ -428,7 +431,7 @@ const CheckoutForm = () => {
                   </Grid>
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 6 }}> {/* Changed from item xs=6 */}
+                    <Grid size={{ xs: 6 }}> 
                       <Controller
                         name="postalCode"
                         control={control}
@@ -589,7 +592,7 @@ const CheckoutForm = () => {
 
             <List sx={{ maxHeight: 400, overflow: "auto", mb: 2 }}>
               {cartItems.map((item) => (
-                <ListItem key={item.id} sx={{ px: 0, alignItems: "flex-start" }}>
+                <ListItem key={`${item.id}-${item.size}-${item.color}`} sx={{ px: 0, alignItems: "flex-start" }}>
                   <Avatar
                     src={item.image}
                     variant="rounded"
@@ -610,13 +613,13 @@ const CheckoutForm = () => {
                           Qty: {item.quantity}
                         </Typography>
                         <Typography variant="body2" color="primary">
-                          {formatPrice(parseFloat(item.price.replace("$", "")))} each
+                          {formatPrice(getNumericPrice(item.price))} each
                         </Typography>
                       </React.Fragment>
                     }
                   />
                   <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    {formatPrice(parseFloat(item.price.replace("$", "")) * item.quantity)}
+                    {formatPrice(getNumericPrice(item.price) * item.quantity)}
                   </Typography>
                 </ListItem>
               ))}

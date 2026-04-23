@@ -19,23 +19,25 @@ const ProductCard = ({ product }: { product: Product }) => {
   const { addToCart } = useCart();
   const router = useRouter();
 
-  const getPrice = (price: number) => {
+  const getPrice = (price: any) => {
+    const numericPrice = typeof price === "number" ? price : parseFloat(String(price).replace(/[^0-9.]/g, ""));
+    const finalPrice = numericPrice || 0;
+
     switch (currency) {
       case "EUR":
-        return `€${(price * 0.92).toFixed(2)}`;
+        return `€${(finalPrice * 0.92).toFixed(2)}`;
       case "GBP":
-        return `£${(price * 0.79).toFixed(2)}`;
+        return `£${(finalPrice * 0.79).toFixed(2)}`;
       case "CAD":
-        return `C$${(price * 1.35).toFixed(2)}`;
+        return `C$${(finalPrice * 1.35).toFixed(2)}`;
       case "PKR":
-        return `Rs ${(price * 278).toFixed(0)}`;
+        return `Rs ${(finalPrice * 278).toFixed(0)}`;
       default:
-        return `$${price.toFixed(2)}`;
+        return `$${finalPrice.toFixed(2)}`;
     }
   };
-
   return (
-    <Box onClick={() => router.push(`/product-detail/${product.id}`)}>
+    <Box onClick={() => router.push(`/product-detail/${product._id || (product as any).id}`)}>
       <Card sx={{ borderRadius: 4, overflow: "hidden" }}>
         <CardMedia
           component="img"

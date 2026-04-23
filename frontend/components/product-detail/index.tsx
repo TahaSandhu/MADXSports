@@ -2,21 +2,17 @@ import { Container, Grid, Box, Breadcrumbs, Link, Typography } from "@mui/materi
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ProductImage from "./ProductImage";
 import ProductInfo from "./ProductInfo";
-import { DUMMY_PRODUCTS, DUMMY_REVIEWS } from "@/core/constants";
+import { DUMMY_REVIEWS } from "@/core/constants";
 import Comments from "./Comments";
+
 interface ProductDetailProps {
   product?: any;
 }
 
 const ProductDetail = ({ product }: ProductDetailProps) => {
-  const displayedProduct = product || DUMMY_PRODUCTS[0];
+  if (!product) return null;
 
-  const images = displayedProduct?.images || [
-    displayedProduct?.image,
-    "/shootergloves/gl1-black.jpeg",
-    "/shootergloves/gl2-vertical-red.jpeg",
-    "/headgard/hg1-golden-premium.jpeg",
-  ].filter(Boolean);
+  const images = product?.images?.length > 0 ? product.images : [product?.image].filter(Boolean);
 
   return (
     <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: { xs: 4, md: 8 } }}>
@@ -33,7 +29,7 @@ const ProductDetail = ({ product }: ProductDetailProps) => {
             Shop
           </Link>
           <Typography color="text.primary" sx={{ fontWeight: "bold" }}>
-            {displayedProduct?.name}
+            {product?.name}
           </Typography>
         </Breadcrumbs>
 
@@ -43,7 +39,7 @@ const ProductDetail = ({ product }: ProductDetailProps) => {
           </Grid>
 
           <Grid size={{ xs: 12, md: 6 }}>
-            <ProductInfo product={displayedProduct} />
+            <ProductInfo product={product} />
           </Grid>
         </Grid>
 

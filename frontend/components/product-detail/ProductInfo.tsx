@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -28,35 +28,44 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   const [selectedColor, setSelectedColor] = useState("Black");
   const [isAdded, setIsAdded] = useState(false);
 
-  const sizes = ["S", "M", "L", "XL", "XXL"];
+  // Use product variants or defaults
+  const sizes = product?.variants?.map((v: any) => v.size) || ["S", "M", "L", "XL", "XXL"];
+  const colorsFromApi = product?.colors || ["Black", "White", "Red", "Blue", "Green"];
+  
+  const colorMap: Record<string, string> = {
+    "Black": "#000000",
+    "White": "#ffffff",
+    "Red": "#f44336",
+    "Blue": "#2196f3",
+    "Green": "#4caf50",
+    "golden": "#FFD700",
+  };
 
-  const colors = [
-    { name: "Black", code: "#000000" },
-    { name: "White", code: "#ffffff" },
-    { name: "Red", code: "#f44336" },
-    { name: "Blue", code: "#2196f3" },
-    { name: "Green", code: "#4caf50" },
-  ];
+  const colors = colorsFromApi.map((c: string) => ({
+    name: c,
+    code: colorMap[c] || "#888888" // Fallback color
+  }));
 
   const handleQuantityChange = (type: "inc" | "dec") => {
     if (type === "inc") setQuantity((p) => p + 1);
     else if (type === "dec" && quantity > 1) setQuantity((p) => p - 1);
   };
 
-  const getNumericPrice = (priceStr: string) => {
-    if (!priceStr) return 0;
-    return parseFloat(priceStr.replace(/[^0-9.]/g, ""));
+  const getNumericPrice = (price: any) => {
+    if (typeof price === "number") return price;
+    if (!price) return 0;
+    return parseFloat(String(price).replace(/[^0-9.]/g, ""));
   };
 
-  const currentPrice = getNumericPrice(product?.price || "$0.00");
+  const currentPrice = getNumericPrice(product?.price || 0);
   const totalPrice = (currentPrice * quantity).toFixed(2);
 
   const handleAddToCart = () => {
     addToCart({
-      id: product.id,
+      id: product._id || product.id,
       name: product.name,
-      price: product.price,
-      image: product.image,
+      price: currentPrice, // Store numeric price
+      image: product.image || product.images?.[0],
       quantity: quantity,
       size: selectedSize,
       color: selectedColor,
@@ -67,6 +76,11 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
     setTimeout(() => setIsAdded(false), 2000);
   };
 
+  useEffect(() => {
+    if (product?.colors?.[0]) setSelectedColor(product.colors[0]);
+    if (product?.variants?.[0]?.size) setSelectedSize(product.variants[0].size);
+  }, [product]);
+
   return (
     <Box sx={{ color: "text.primary" }}>
       <Stack sx={{ flexDirection: "row", gap: 1, alignItems: "center", mb: 1 }}>
@@ -76,7 +90,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         <Chip label="In Stock" size="small" />
       </Stack>
 
-      <Typography variant="h3" component="h1" sx={{ fontWeight: 800, mb: 2 }}>
+      <Typography variant="h4" component="h1" sx={{ fontWeight: 800, mb: 2 }}>
         {product?.name}
       </Typography>
 
@@ -87,7 +101,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold", color: "primary.main" }}>
-          {product?.price}
+          ${currentPrice}
         </Typography>
       </Box>
 
@@ -103,7 +117,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         </Typography>
 
         <Stack sx={{ flexDirection: "row", gap: 1.5, flexWrap: "wrap" }}>
-          {colors.map((color) => (
+          {colors.map((color: any) => (
             <Box
               key={color.name}
               onClick={() => setSelectedColor(color.name)}
@@ -139,7 +153,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         </Typography>
 
         <Stack sx={{ flexDirection: "row", gap: 1.5 }}>
-          {sizes.map((size) => (
+          {sizes.map((size: string) => (
             <Box
               key={size}
               onClick={() => setSelectedSize(size)}
