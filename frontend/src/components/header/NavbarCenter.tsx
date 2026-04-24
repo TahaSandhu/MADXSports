@@ -1,11 +1,10 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
 import { useState, useRef } from "react";
 import { CATEGORIES_DATA } from "@/core/constants";
-import { useAuth } from "@/core/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 type Category = {
   name: string;
@@ -13,6 +12,7 @@ type Category = {
   items?: string[];
   sections?: {
     title: string;
+    url?: string;
     items: string[];
   }[];
 };
@@ -60,6 +60,7 @@ const NavbarCenter = ({ isAdmin }: { isAdmin: boolean }) => {
 const Dropdown = ({ category }: { category: Category }) => {
   const [open, setOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const router = useRouter();
 
   if (!category.sections && !category.items) return null;
 
@@ -75,14 +76,24 @@ const Dropdown = ({ category }: { category: Category }) => {
   const sectionsToRender = category.sections
     ? category.sections
     : category.items
-    ? [{ title: category.name, items: category.items }]
+    ? [{ title: category.name, items: category.items, url: category.url }]
     : [];
 
   return (
     <>
       {/* Button */}
       <Box onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
-        <Button color="inherit" endIcon={<ExpandMore />} sx={hoverStyle}>
+        <Button
+          color="inherit"
+          endIcon={<ExpandMore />}
+          sx={hoverStyle}
+          onClick={() => {
+            if (category.url) {
+              router.push(category.url);
+              setOpen(false);
+            }
+          }}
+        >
           {category.name}
         </Button>
       </Box>
@@ -118,7 +129,20 @@ const Dropdown = ({ category }: { category: Category }) => {
         >
           {sectionsToRender.map((sec) => (
             <Box key={sec.title}>
-              <Box sx={{ fontWeight: "bold", mb: 1.5, color: "#ff1744" }}>
+              <Box
+                sx={{
+                  fontWeight: "bold",
+                  mb: 1.5,
+                  color: "#ff1744",
+                  cursor: sec.url ? "pointer" : "default",
+                }}
+                onClick={() => {
+                  if (sec.url) {
+                    router.push(sec.url);
+                    setOpen(false);
+                  }
+                }}
+              >
                 {sec.title}
               </Box>
 
@@ -130,6 +154,13 @@ const Dropdown = ({ category }: { category: Category }) => {
                     mb: 0.7,
                     cursor: "pointer",
                     "&:hover": { color: "#ff1744" },
+                  }}
+                  onClick={() => {
+                    const url = sec.url || category.url;
+                    if (url) {
+                      router.push(`${url}?filter=${encodeURIComponent(item)}`);
+                      setOpen(false);
+                    }
                   }}
                 >
                   {item}
