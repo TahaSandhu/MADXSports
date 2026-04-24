@@ -2,8 +2,7 @@ import { Container, Grid, Box, Breadcrumbs, Link, Typography } from "@mui/materi
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import ProductImage from "./ProductImage";
 import ProductInfo from "./ProductInfo";
-import { DUMMY_REVIEWS } from "@/core/constants";
-import Comments from "./Comments";
+import ProductReviews from "./ProductReviews";
 
 interface ProductDetailProps {
   product?: any;
@@ -44,7 +43,7 @@ const ProductDetail = ({ product }: ProductDetailProps) => {
         </Grid>
 
         <Box sx={{ mt: 10 }}>
-          <Comments reviews={DUMMY_REVIEWS} />
+          <ProductReviews productId={product._id} />
         </Box>
       </Container>
     </Box>

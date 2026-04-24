@@ -8,13 +8,23 @@ import {
   Chip,
   Stack,
   IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Link,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { useCart } from "@/core/context/CartContext";
 import { useRouter } from "next/router";
+import SizeChartModal from "./SizeChartModal";
 
 interface ProductInfoProps {
   product: any;
@@ -27,6 +37,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedColor, setSelectedColor] = useState("Black");
   const [isAdded, setIsAdded] = useState(false);
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
 
   // Use product variants or defaults
   const sizes = product?.variants?.map((v: any) => v.size) || ["S", "M", "L", "XL", "XXL"];
@@ -107,9 +118,69 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
 
       <Divider sx={{ mb: 4 }} />
 
-      <Typography variant="body1" sx={{ mb: 4 }}>
-        {product?.description}
-      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <Accordion 
+          defaultExpanded 
+          elevation={0} 
+          sx={{ 
+            bgcolor: 'transparent', 
+            '&:before': { display: 'none' },
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)' 
+          }}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'primary.main' }} />}>
+            <Typography sx={{ fontWeight: 'bold' }}>Description</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+              {product?.description}
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+
+        <Accordion 
+          elevation={0} 
+          sx={{ 
+            bgcolor: 'transparent', 
+            '&:before': { display: 'none' },
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)' 
+          }}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: 'primary.main' }} />}>
+            <Typography sx={{ fontWeight: 'bold' }}>Shipping & Return Policy</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box>
+                <Typography variant="subtitle2" color="primary" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                  <LocalShippingIcon fontSize="small" /> Delivery
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Global Delivery will be within 13-15 business days depending on your location.
+                </Typography>
+                <Link href="#" sx={{ fontSize: '0.75rem', color: 'primary.main', mt: 0.5, display: 'inline-block' }}>
+                  Click here for heavy items delivery rates
+                </Link>
+              </Box>
+              
+              <Box>
+                <Typography variant="subtitle2" color="primary" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                  <VerifiedUserIcon fontSize="small" /> Returns
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  In case you are not satisfied with the product or due to any other reason, you may return the item to us for a 100% refund.
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  For returning a heavy item, a collection will be arranged at your doorstep or a prepaid return label will be provided.
+                </Typography>
+                <Link href="#" sx={{ fontSize: '0.75rem', color: 'primary.main', mt: 0.5, display: 'inline-block' }}>
+                  Click here to initiate return
+                </Link>
+              </Box>
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+      </Box>
 
       <Box sx={{ mb: 4 }}>
         <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 2 }}>
@@ -148,9 +219,24 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
       </Box>
 
       <Box sx={{ mb: 4 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 2 }}>
-          Select Size
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+            Select Size
+          </Typography>
+          <Link 
+            component="button" 
+            variant="body2" 
+            onClick={() => setIsSizeChartOpen(true)}
+            sx={{ 
+              color: 'primary.main', 
+              textDecoration: 'none', 
+              fontWeight: 500,
+              '&:hover': { textDecoration: 'underline' }
+            }}
+          >
+            Size Chart
+          </Link>
+        </Box>
 
         <Stack sx={{ flexDirection: "row", gap: 1.5 }}>
           {sizes.map((size: string) => (
@@ -199,7 +285,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
         </Stack>
       </Box>
 
-      <Stack sx={{ flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
+      <Stack sx={{ flexDirection: { xs: "column", sm: "row" }, gap: 2, mt: 4 }}>
         <Button
           variant="contained"
           fullWidth
@@ -213,6 +299,42 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
           Buy Now
         </Button>
       </Stack>
+
+      <Box 
+        sx={{ 
+          mt: 4, 
+          p: 2, 
+          borderRadius: 2, 
+          bgcolor: 'rgba(255, 255, 255, 0.03)', 
+          border: '1px solid rgba(255, 255, 255, 0.05)' 
+        }}
+      >
+        <Stack spacing={2}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <WorkspacePremiumIcon color="primary" />
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              30-Day Return Guarantee
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <VerifiedUserIcon color="primary" />
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              Free and Easy Returns
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <SupportAgentIcon color="primary" />
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              24/7 Professional Customer Care
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
+
+      <SizeChartModal 
+        open={isSizeChartOpen} 
+        onClose={() => setIsSizeChartOpen(false)} 
+      />
     </Box>
   );
 };

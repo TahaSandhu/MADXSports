@@ -20,3 +20,15 @@ export type Product = {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export interface Review {
+  _id: string;
+  name: string;
+  rating: number;
+  comment: string;
+  date: string;
+  avatarUrl: string;
+  productId: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
