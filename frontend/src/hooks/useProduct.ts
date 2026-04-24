@@ -21,33 +21,55 @@ const MOCK_PRODUCTS: any[] = Array.from({ length: 50 }, (_, i) => ({
 
 export function useProducts(searchTerm: string = '', page: number = 1, pageSize: number = 12) {
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
+    const fetchAllProducts = async () => {
+      setIsInitialLoading(true);
+      try {
+        const res = await axios.get(GET_URL);
+        const products: Product[] = res.data;
+        setAllProducts(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsInitialLoading(false);
+      }
+    };
+    fetchAllProducts();
+  }, []);
+
+  useEffect(() => {
+    if (isInitialLoading) {
+      setLoading(true);
+      return;
+    }
+
     setLoading(true);
-    // Simulate API delay
-    const timer = setTimeout(() => {
-      const filtered = MOCK_PRODUCTS.filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+    const filtered = allProducts.filter(p => 
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-      const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
-      
-      setData(paginated);
-      setTotal(filtered.length);
-      setLoading(false);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm, page, pageSize]);
+    const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+    
+    setData(paginated);
+    setTotal(filtered.length);
+    setLoading(false);
+  }, [searchTerm, page, pageSize, allProducts, isInitialLoading]);
 
   const trendingProducts = useMemo(() => 
-    MOCK_PRODUCTS.filter(p => p.isTrending).slice(0, 8), 
-  []);
+    allProducts.filter(p => p.isTrending), 
+  [allProducts]);
 
-  return { loading, products: data, total, trendingProducts };
+  const newReleases = useMemo(() => 
+    allProducts.filter(p => p.isNewRelease), 
+  [allProducts]);
+
+  return { loading: loading || isInitialLoading, products: data, total, trendingProducts, newReleases };
 }
 
 export const useProduct = () => {

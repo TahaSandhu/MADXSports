@@ -1,18 +1,26 @@
 import ProductList from "@/components/product";
 import TrendingBar from "@/components/trending-bar";
 import TrendingCarousel from "@/components/trending-bar/trendingcards";
-import { NEW_RELEASES } from "@/core/constants";
 import { useProducts } from "@/hooks/useProduct";
+import Loader from "@/components/common/Loader";
 
 const IndexPage = () => {
-  const { products } = useProducts();
+  const { trendingProducts, newReleases, loading } = useProducts();
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
       <TrendingBar />
-      <TrendingCarousel products={NEW_RELEASES} title="Trending Now" />
+      {trendingProducts.length > 0 && (
+        <TrendingCarousel products={trendingProducts} title="Trending Now" />
+      )}
       <ProductList />
-      <TrendingCarousel products={NEW_RELEASES} title="New Releases" />
+      {newReleases.length > 0 && (
+        <TrendingCarousel products={newReleases} title="New Releases" />
+      )}
     </>
   );
 };

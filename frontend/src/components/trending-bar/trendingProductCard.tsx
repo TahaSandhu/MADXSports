@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { useRouter } from 'next/router';
 
+import { Product } from '@/hooks/types';
+
 interface ProductCardProps {
-  product: any;
+  product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
@@ -16,6 +18,7 @@ const router = useRouter();
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
+      style={{ display: 'flex', flexDirection: 'column', flex: 1, width: '100%' }}
     >
       <Card
         sx={{
@@ -36,7 +39,7 @@ const router = useRouter();
         <Box sx={{ position: 'relative', overflow: 'hidden', pt: '125%' }}>
           <CardMedia
             component="img"
-            image={product.image}
+            image={product.images && product.images.length > 0 ? product.images[0] : ''}
             alt={product.name}
             sx={{
               position: 'absolute',
@@ -82,7 +85,7 @@ const router = useRouter();
               variant="text"
               size="small"
               endIcon={<ArrowUpRight size={16} />}
-              onClick={() => router.push(`/trending/${product.id}`)}
+              onClick={() => router.push(`/product-detail/${product._id}`)}
               sx={{ color: 'white', '&:hover': { color: 'primary.main' } }}
             >
               Details
@@ -108,7 +111,7 @@ const router = useRouter();
           <Button
             variant="contained"
             fullWidth
-            onClick={() => router.push(`/trending/${product.id}`)}
+            onClick={() => router.push(`/product-detail/${product._id}`)}
             sx={{ bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.main', color: 'white' } }}
           >
             View Details

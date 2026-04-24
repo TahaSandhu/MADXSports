@@ -5,8 +5,10 @@ import ProductCard from './trendingProductCard';
 // import ProductCard from './ProductCard';
 // import { Product } from '../hooks/useProducts';
 
+import { Product } from '@/hooks/types';
+
 interface CarouselProps {
-  products: any[];
+  products: Product[];
   title: string;
 }
 
@@ -65,10 +67,11 @@ const TrendingCarousel: React.FC<CarouselProps> = ({ products, title }) => {
         >
           {products.map((product) => (
             <Box 
-              key={product.id} 
+              key={product._id} 
               sx={{ 
                 minWidth: { xs: '280px', sm: '320px', md: '360px' },
-                scrollSnapAlign: 'start'
+                scrollSnapAlign: 'start',
+                display: 'flex', // Add this
               }}
             >
               <ProductCard product={product} />

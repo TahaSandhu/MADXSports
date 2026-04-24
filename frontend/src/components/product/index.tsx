@@ -3,6 +3,7 @@ import { Box, Container, Typography, Pagination, Grid } from "@mui/material";
 import ProductCard from "./ProductCard";
 import { Product } from "@/hooks/types";
 import { useProductsApi } from "@/hooks/useProduct";
+import Loader from "@/components/common/Loader";
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -53,12 +54,12 @@ const ProductList = () => {
         </Typography>
 
         {loading ? (
-          <Typography align="center">Loading...</Typography>
+          <Loader />
         ) : (
           <>
             <Grid container spacing={4}>
               {selectedProducts.map((product) => (
-                <Grid key={product.id} size={{ xs: 12, sm: 6, md: 4 }}>
+                <Grid key={product._id} size={{ xs: 12, sm: 6, md: 4 }} sx={{ display: 'flex' }}>
                   <ProductCard product={product} />
                 </Grid>
               ))}

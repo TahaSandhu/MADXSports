@@ -37,8 +37,11 @@ const ProductCard = ({ product }: { product: Product }) => {
     }
   };
   return (
-    <Box onClick={() => router.push(`/product-detail/${product._id || (product as any).id}`)}>
-      <Card sx={{ borderRadius: 4, overflow: "hidden" }}>
+    <Box 
+      onClick={() => router.push(`/product-detail/${product._id || (product as any).id}`)}
+      sx={{ height: '100%', display: 'flex' }}
+    >
+      <Card sx={{ borderRadius: 4, overflow: "hidden", height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
         <CardMedia
           component="img"
           height="240"
@@ -46,7 +49,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           alt={product.name}
         />
 
-        <CardContent>
+        <CardContent sx={{ flexGrow: 1 }}>
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             {product.name}
           </Typography>
@@ -56,26 +59,16 @@ const ProductCard = ({ product }: { product: Product }) => {
           <Typography variant="h6" color="primary">
             {getPrice(product.price)}
           </Typography>
-
-          {/* <Typography
-            variant="body2"
-            sx={{
-              display: "-webkit-box",
-              WebkitBoxOrient: "vertical",
-              WebkitLineClamp: 3,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {product.description}
-          </Typography> */}
         </CardContent>
 
-        <CardActions>
+        <CardActions sx={{ mt: 'auto' }}>
           <Button
             fullWidth
             variant="contained"
-            onClick={() => addToCart(product)}
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCart(product);
+            }}
           >
             Add to Cart
           </Button>
