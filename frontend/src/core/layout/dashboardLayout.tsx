@@ -1,7 +1,7 @@
 "use client";
 
-import { Box, Typography, List, ListItemButton, ListItemText, Collapse } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { Box, Typography, List, ListItemButton, ListItemText, Collapse, Drawer, IconButton } from "@mui/material";
+import { ExpandLess, ExpandMore, Menu as MenuIcon } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -22,6 +22,11 @@ const menuItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [productsOpen, setProductsOpen] = useState(true);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
 //   useEffect(() => {
 //     const token = localStorage.getItem('token');
@@ -36,75 +41,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     router.push('/signin');
   };
 
-  return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#000" }}>
-      <Box
+  const drawerContent = (
+    <Box sx={{ p: 2 }}>
+      <Typography
+        variant="h6"
         sx={{
-          width: 240,
-          bgcolor: "#0d0d0d",
-          borderRight: "1px solid #1f1f1f",
-          p: 2,
+          color: "#ff1744",
+          fontWeight: "bold",
+          mb: 3,
+          cursor: "pointer",
         }}
+        onClick={() => router.push("/")}
       >
-        <Typography
-          variant="h6"
-          sx={{
-            color: "#ff1744",
-            fontWeight: "bold",
-            mb: 3,
-            cursor: "pointer",
-          }}
-          onClick={() => router.push("/")}
-        >
-            MADX Sports
-        </Typography>
+          MADX Sports
+      </Typography>
 
-        <List>
-          {menuItems.map((item) => (
-            <Box key={item.name}>
-              {item.subItems ? (
-                <>
-                  <ListItemButton
-                    onClick={() => setProductsOpen(!productsOpen)}
-                    sx={{
-                      borderRadius: 2,
-                      mb: 1,
-                      color: "#ccc",
-                      "&:hover": {
-                        bgcolor: "rgba(255, 23, 68, 0.1)",
-                        color: "#ff1744",
-                      },
-                    }}
-                  >
-                    <ListItemText primary={item.name} />
-                    {productsOpen ? <ExpandLess /> : <ExpandMore />}
-                  </ListItemButton>
-                  <Collapse in={productsOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {item.subItems.map((subItem) => (
-                        <ListItemButton
-                          key={subItem.name}
-                          onClick={() => router.push(subItem.path)}
-                          sx={{
-                            pl: 4,
-                            borderRadius: 2,
-                            mb: 1,
-                            color: "#999",
-                            "&:hover": {
-                              bgcolor: "rgba(255, 23, 68, 0.05)",
-                              color: "#ff1744",
-                            },
-                          }}
-                        >
-                          <ListItemText primary={subItem.name} />
-                        </ListItemButton>
-                      ))}
-                    </List>
-                  </Collapse>
-                </>
-              ) : (
+      <List>
+        {menuItems.map((item) => (
+          <Box key={item.name}>
+            {item.subItems ? (
+              <>
                 <ListItemButton
-                  onClick={() => router.push(item.path)}
+                  onClick={() => setProductsOpen(!productsOpen)}
                   sx={{
                     borderRadius: 2,
                     mb: 1,
@@ -116,27 +74,102 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   }}
                 >
                   <ListItemText primary={item.name} />
+                  {productsOpen ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
-              )}
-            </Box>
-          ))}
-          <ListItemButton
-            onClick={handleLogout}
-            sx={{
-              borderRadius: 2,
-              mb: 1,
-              color: "#f44336",
-              "&:hover": {
-                bgcolor: "rgba(244, 67, 54, 0.1)",
-              },
-            }}
-          >
-            <ListItemText primary="Logout" />
-          </ListItemButton>
-        </List>
+                <Collapse in={productsOpen} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {item.subItems.map((subItem) => (
+                      <ListItemButton
+                        key={subItem.name}
+                        onClick={() => router.push(subItem.path)}
+                        sx={{
+                          pl: 4,
+                          borderRadius: 2,
+                          mb: 1,
+                          color: "#999",
+                          "&:hover": {
+                            bgcolor: "rgba(255, 23, 68, 0.05)",
+                            color: "#ff1744",
+                          },
+                        }}
+                      >
+                        <ListItemText primary={subItem.name} />
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Collapse>
+              </>
+            ) : (
+              <ListItemButton
+                onClick={() => router.push(item.path)}
+                sx={{
+                  borderRadius: 2,
+                  mb: 1,
+                  color: "#ccc",
+                  "&:hover": {
+                    bgcolor: "rgba(255, 23, 68, 0.1)",
+                    color: "#ff1744",
+                  },
+                }}
+              >
+                <ListItemText primary={item.name} />
+              </ListItemButton>
+            )}
+          </Box>
+        ))}
+        <ListItemButton
+          onClick={handleLogout}
+          sx={{
+            borderRadius: 2,
+            mb: 1,
+            color: "#f44336",
+            "&:hover": {
+              bgcolor: "rgba(244, 67, 54, 0.1)",
+            },
+          }}
+        >
+          <ListItemText primary="Logout" />
+        </ListItemButton>
+      </List>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#000" }}>
+      <Box
+        component="nav"
+        sx={{ width: { md: 240 }, flexShrink: { md: 0 } }}
+      >
+        {/* Mobile Drawer */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240, bgcolor: "#0d0d0d", borderRight: "1px solid #1f1f1f" },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
+        
+        {/* Desktop Drawer */}
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240, bgcolor: "#0d0d0d", borderRight: "1px solid #1f1f1f" },
+          }}
+          open
+        >
+          {drawerContent}
+        </Drawer>
       </Box>
 
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <Box sx={{ flex: 1, display: "flex", flexDirection: "column", width: { xs: '100%', md: `calc(100% - 240px)` } }}>
         <Box
           sx={{
             height: 64,
@@ -145,18 +178,29 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            px: 3,
+            px: { xs: 2, md: 3 },
           }}
         >
-          <Typography sx={{ color: "#fff", fontWeight: 500 }}>
-            E-commerce Dashboard
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { md: 'none' }, color: '#fff' }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography sx={{ color: "#fff", fontWeight: 500 }}>
+              E-commerce Dashboard
+            </Typography>
+          </Box>
           <Typography sx={{ color: "#ff1744", fontSize: 14 }}>
             Admin
           </Typography>
         </Box>
 
-        <Box sx={{ p: 3, bgcolor: "#000", flex: 1 }}>
+        <Box sx={{ p: { xs: 2, md: 3 }, bgcolor: "#000", flex: 1 }}>
           {children}
         </Box>
       </Box>
