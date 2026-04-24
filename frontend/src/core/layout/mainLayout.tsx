@@ -13,11 +13,12 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   const pathname = usePathname();
   const isDetailProductRoute = pathname?.startsWith("/product-detail/");
+  const isCheckoutRoute = pathname?.startsWith("/checkout");
 
   return (
     <Box>
       <Navbar />
-      {!isDetailProductRoute && <HeroCarousel key={pathname} />}
+      {!isDetailProductRoute && !isCheckoutRoute && <HeroCarousel key={pathname} />}
       <Box sx={{ flexGrow: 1 }}>{children}</Box>
       <WhatsAppButton phoneNumber="+447480396846" message="Hi, I need help!" />
       <Footer />

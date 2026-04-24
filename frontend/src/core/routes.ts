@@ -2,6 +2,7 @@ export const SIGNIN_URL = '/sign-in';
 export const SIGNUP_URL = '/sign-up';
 export const PRODUCT_DETAIL = '/product-detail';
 export const CHECKOUT_URL = '/checkout';
+export const CHECKOUT_SUCCESS_URL = '/checkout/success';
 export const DASHBOARD_URL = '/dashboard';
 
 export const PROTECTED_ROUTES = [
