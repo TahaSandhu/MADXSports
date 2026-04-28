@@ -7,7 +7,9 @@ import { useEffect, useState } from "react";
 
 const menuItems = [
   { name: "Overview", path: "/dashboard" },
-  { name: "Orders", path: "/dashboard/orders" },
+  { name: "Orders", path: "/dashboard/orders",subItems: [
+      { name: "All Orders", path: "/dashboard/orders" },
+    ] },
   { 
     name: "Products", 
     path: "/dashboard/products",
@@ -140,13 +142,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         component="nav"
         sx={{ width: { md: 240 }, flexShrink: { md: 0 } }}
       >
-        {/* Mobile Drawer */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true, 
           }}
           sx={{
             display: { xs: 'block', md: 'none' },
@@ -156,7 +157,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {drawerContent}
         </Drawer>
         
-        {/* Desktop Drawer */}
         <Drawer
           variant="permanent"
           sx={{

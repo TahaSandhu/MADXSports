@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import * as yup from "yup";
 import {
@@ -45,8 +45,11 @@ import {
 } from "@mui/icons-material";
 import { checkoutSchema } from "./resolver";
 import { useCheckout } from "@/hooks/checkout";
+import { useRouter } from "next/router";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+);
 
 type CheckoutFormData = yup.InferType<typeof checkoutSchema>;
 
@@ -60,6 +63,9 @@ const CheckoutForm = () => {
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const { createOrder } = useCheckout();
+  const hasSubmitted = useRef(false);
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -121,13 +127,48 @@ const CheckoutForm = () => {
     return calculateSubtotal() + calculateShipping() + calculateTax();
   };
 
+  const getCurrencyCode = () => {
+    switch (currency) {
+      case "GBP":
+        return "gbp";
+      case "EUR":
+        return "eur";
+      case "CAD":
+        return "cad";
+      case "PKR":
+        return "pkr";
+      default:
+        return "usd";
+    }
+  };
+
+  const getConvertedTotal = () => {
+    switch (currency) {
+      case "GBP":
+        return calculateTotal() * 0.79;
+      case "EUR":
+        return calculateTotal() * 0.92;
+      case "CAD":
+        return calculateTotal() * 1.35;
+      case "PKR":
+        return calculateTotal() * 278;
+      default:
+        return calculateTotal();
+    }
+  };
+
   const formatPrice = (price: number) => {
     switch (currency) {
-      case "EUR": return `€${(price * 0.92).toFixed(2)}`;
-      case "GBP": return `£${(price * 0.79).toFixed(2)}`;
-      case "CAD": return `C$${(price * 1.35).toFixed(2)}`;
-      case "PKR": return `Rs ${(price * 278).toFixed(0)}`;
-      default: return `$${price.toFixed(2)}`;
+      case "EUR":
+        return `€${(price * 0.92).toFixed(2)}`;
+      case "GBP":
+        return `£${(price * 0.79).toFixed(2)}`;
+      case "CAD":
+        return `C$${(price * 1.35).toFixed(2)}`;
+      case "PKR":
+        return `Rs ${(price * 278).toFixed(0)}`;
+      default:
+        return `$${price.toFixed(2)}`;
     }
   };
 
@@ -135,12 +176,22 @@ const CheckoutForm = () => {
 
   const handleNext = () => {
     if (activeStep === 0) {
-      if (!watchedFields.email || !watchedFields.firstName || !watchedFields.lastName || !watchedFields.phone) {
+      if (
+        !watchedFields.email ||
+        !watchedFields.firstName ||
+        !watchedFields.lastName ||
+        !watchedFields.phone
+      ) {
         alert("Please fill all required fields");
         return;
       }
     } else if (activeStep === 1) {
-      if (!watchedFields.address || !watchedFields.city || !watchedFields.state || !watchedFields.postalCode) {
+      if (
+        !watchedFields.address ||
+        !watchedFields.city ||
+        !watchedFields.state ||
+        !watchedFields.postalCode
+      ) {
         alert("Please fill all address fields");
         return;
       }
@@ -152,79 +203,91 @@ const CheckoutForm = () => {
     setActiveStep((prev) => prev - 1);
   };
 
-const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
-  if (!stripe || !elements) {
-    setPaymentError("Payment system not ready");
-    return;
-  }
+  const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
+    if (hasSubmitted.current) return;
+    hasSubmitted.current = true;
 
-  setIsProcessing(true);
-  setPaymentError(null);
+    if (!stripe || !elements) {
+      setPaymentError("Payment system not ready");
+      hasSubmitted.current = false;
+      return;
+    }
 
-  try {
-    const orderResponse = await createOrder({
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      phone: data.phone,
-      address: data.address,
-      apartment: data.apartment,
-      city: data.city,
-      state: data.state,
-      postalCode: data.postalCode,
-      country: data.country,
-      items: cartItems.map((item) => ({
-        name: item.name,
-        price: getNumericPrice(item.price),
-        quantity: item.quantity,
-        size: item.size,
-        color: item.color,
-      })),
-      subtotal: calculateSubtotal(),
-      shipping: calculateShipping(),
-      tax: calculateTax(),
-      total: calculateTotal(),
-    });
+    setIsProcessing(true);
+    setPaymentError(null);
 
-    const result = await stripe.confirmCardPayment(orderResponse.clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement)!,
-        billing_details: {
-          name: `${data.firstName} ${data.lastName}`,
-          email: data.email,
-          phone: data.phone,
-          address: {
-            line1: data.address,
-            line2: data.apartment,
-            city: data.city,
-            state: data.state,
-            postal_code: data.postalCode,
-            country: data.country,
+    try {
+      const orderResponse = await createOrder({
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: data.phone,
+        address: data.address,
+        apartment: data.apartment,
+        city: data.city,
+        state: data.state,
+        postalCode: data.postalCode,
+        country: data.country,
+        items: cartItems.map((item) => ({
+          name: item.name,
+          price: getNumericPrice(item.price),
+          quantity: item.quantity,
+          size: item.size,
+          color: item.color,
+        })),
+        subtotal: calculateSubtotal(),
+        shipping: calculateShipping(),
+        tax: calculateTax(),
+        total: getConvertedTotal(),
+        currency: getCurrencyCode(),
+      });
+
+      const result = await stripe.confirmCardPayment(
+        orderResponse.clientSecret,
+        {
+          payment_method: {
+            card: elements.getElement(CardElement)!,
+            billing_details: {
+              name: `${data.firstName} ${data.lastName}`,
+              email: data.email,
+              phone: data.phone,
+              address: {
+                line1: data.address,
+                line2: data.apartment,
+                city: data.city,
+                state: data.state,
+                postal_code: data.postalCode,
+                country: data.country,
+              },
+            },
           },
         },
-      },
-    });
+      );
 
-    if (result.error) {
-      setPaymentError(result.error.message || "Payment failed");
-    } else if (result.paymentIntent?.status === "succeeded") {
-      setPaymentSuccess(true);
-      setTimeout(() => {
-        window.location.href = "/success";
-      }, 2000);
+      if (result.error) {
+        setPaymentError(result.error.message || "Payment failed");
+        hasSubmitted.current = false;
+      } else if (result.paymentIntent?.status === "succeeded") {
+        setPaymentSuccess(true);
+        setTimeout(() => {
+          router.push("/success");
+        }, 2000);
+      }
+    } catch {
+      setPaymentError("Something went wrong");
+      hasSubmitted.current = false;
+    } finally {
+      setIsProcessing(false);
     }
-  } catch {
-    setPaymentError("Something went wrong");
-  } finally {
-    setIsProcessing(false);
-  }
-};
+  };
 
   if (cartItems.length === 0) {
     return (
       <Paper sx={{ p: 6, textAlign: "center" }}>
         <ShoppingBag sx={{ fontSize: 80, color: "#ccc", mb: 2 }} />
-        <Typography variant="h5" gutterBottom>Your cart is empty</Typography>
+        <Typography variant="h5" gutterBottom>
+          Your cart is empty
+        </Typography>
         <Button href="/products" variant="contained" color="primary">
           Continue Shopping
         </Button>
@@ -237,7 +300,9 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
       <Fade in={true}>
         <Paper sx={{ p: 6, textAlign: "center" }}>
           <CheckCircle sx={{ fontSize: 80, color: "#4caf50", mb: 2 }} />
-          <Typography variant="h5" gutterBottom>Payment Successful!</Typography>
+          <Typography variant="h5" gutterBottom>
+            Payment Successful!
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             Redirecting you to order confirmation...
           </Typography>
@@ -250,7 +315,7 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 7 }}> 
+        <Grid size={{ xs: 12, md: 7 }}>
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
               {steps.map((label) => (
@@ -263,11 +328,15 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
             {activeStep === 0 && (
               <Grow in={true}>
                 <Box>
-                  <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
                     <Payment fontSize="small" color="primary" />
                     Contact Information
                   </Typography>
-                  
+
                   <Controller
                     name="email"
                     control={control}
@@ -340,7 +409,11 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
             {activeStep === 1 && (
               <Grow in={true}>
                 <Box>
-                  <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
                     <LocalShipping fontSize="small" color="primary" />
                     Shipping Address
                   </Typography>
@@ -390,7 +463,7 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                         )}
                       />
                     </Grid>
-                    <Grid size={{ xs: 6 }}> 
+                    <Grid size={{ xs: 6 }}>
                       <Controller
                         name="state"
                         control={control}
@@ -409,7 +482,7 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                   </Grid>
 
                   <Grid container spacing={2}>
-                    <Grid size={{ xs: 6 }}> 
+                    <Grid size={{ xs: 6 }}>
                       <Controller
                         name="postalCode"
                         control={control}
@@ -425,7 +498,7 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                         )}
                       />
                     </Grid>
-                    <Grid size={{ xs: 6 }}> {/* Changed from item xs=6 */}
+                    <Grid size={{ xs: 6 }}>
                       <Controller
                         name="country"
                         control={control}
@@ -437,7 +510,10 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                             margin="normal"
                             placeholder="Enter 2-letter country code (e.g., US, GB, PK)"
                             error={!!errors.country}
-                            helperText={errors.country?.message || "Use 2-letter code: US, GB, PK, etc."}
+                            helperText={
+                              errors.country?.message ||
+                              "Use 2-letter code: US, GB, PK, etc."
+                            }
                           />
                         )}
                       />
@@ -468,23 +544,34 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
             {activeStep === 2 && (
               <Grow in={true}>
                 <Box>
-                  <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
                     <CreditCard fontSize="small" color="primary" />
                     Payment Details
                   </Typography>
 
-                  <Card variant="outlined" sx={{ p: 2, mt: 2, bgcolor: "#fafafa" }}>
-                    <Typography variant="body2" gutterBottom>Card Information</Typography>
-                    <Box sx={{ 
-                      p: 2, 
-                      border: "1px solid #e0e0e0", 
-                      borderRadius: 2, 
-                      bgcolor: "white",
-                      "&:focus-within": {
-                        borderColor: "primary.main",
-                        boxShadow: "0 0 0 2px rgba(103, 110, 234, 0.2)",
-                      }
-                    }}>
+                  <Card
+                    variant="outlined"
+                    sx={{ p: 2, mt: 2, bgcolor: "#fafafa" }}
+                  >
+                    <Typography variant="body2" gutterBottom>
+                      Card Information
+                    </Typography>
+                    <Box
+                      sx={{
+                        p: 2,
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 2,
+                        bgcolor: "white",
+                        "&:focus-within": {
+                          borderColor: "primary.main",
+                          boxShadow: "0 0 0 2px rgba(103, 110, 234, 0.2)",
+                        },
+                      }}
+                    >
                       <CardElement
                         options={{
                           hidePostalCode: true,
@@ -511,14 +598,21 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                     </Alert>
                   )}
 
-                  <Alert severity="info" sx={{ mt: 2 }} icon={<Lock fontSize="small" />}>
-                    Your payment information is encrypted and secure. We accept all major credit cards.
+                  <Alert
+                    severity="info"
+                    sx={{ mt: 2 }}
+                    icon={<Lock fontSize="small" />}
+                  >
+                    Your payment information is encrypted and secure. We accept
+                    all major credit cards.
                   </Alert>
                 </Box>
               </Grow>
             )}
 
-            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+            <Box
+              sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}
+            >
               <Button
                 onClick={handleBack}
                 disabled={activeStep === 0}
@@ -533,9 +627,11 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                   variant="contained"
                   endIcon={<ArrowForward />}
                   sx={{
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                     "&:hover": {
-                      background: "linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%)",
+                      background:
+                        "linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%)",
                     },
                   }}
                 >
@@ -546,23 +642,28 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                   type="submit"
                   variant="contained"
                   disabled={!stripe || isProcessing}
-                  startIcon={isProcessing ? <CircularProgress size={20} /> : <Lock />}
+                  startIcon={
+                    isProcessing ? <CircularProgress size={20} /> : <Lock />
+                  }
                   sx={{
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                     "&:hover": {
-                      background: "linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%)",
+                      background:
+                        "linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%)",
                     },
                   }}
                 >
-                  {isProcessing ? "Processing..." : `Pay ${formatPrice(calculateTotal())}`}
+                  {isProcessing
+                    ? "Processing..."
+                    : `Pay ${formatPrice(calculateTotal())}`}
                 </Button>
               )}
             </Box>
           </Paper>
         </Grid>
 
-        {/* Right Column - Order Summary */}
-        <Grid size={{ xs: 12, md: 5 }}> {/* Changed from item xs=12 md=5 */}
+        <Grid size={{ xs: 12, md: 5 }}>
           <Paper sx={{ p: 3, borderRadius: 3, position: "sticky", top: 20 }}>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold" }}>
               Order Summary
@@ -570,7 +671,10 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
 
             <List sx={{ maxHeight: 400, overflow: "auto", mb: 2 }}>
               {cartItems.map((item) => (
-                <ListItem key={`${item.id}-${item.size}-${item.color}`} sx={{ px: 0, alignItems: "flex-start" }}>
+                <ListItem
+                  key={`${item.id}-${item.size}-${item.color}`}
+                  sx={{ px: 0, alignItems: "flex-start" }}
+                >
                   <Avatar
                     src={item.image}
                     variant="rounded"
@@ -584,10 +688,19 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
                     }
                     secondary={
                       <React.Fragment>
-                        <Typography variant="caption" component="div" color="text.secondary">
-                          Size: {item.size || "N/A"} | Color: {item.color || "N/A"}
+                        <Typography
+                          variant="caption"
+                          component="div"
+                          color="text.secondary"
+                        >
+                          Size: {item.size || "N/A"} | Color:{" "}
+                          {item.color || "N/A"}
                         </Typography>
-                        <Typography variant="caption" component="div" color="text.secondary">
+                        <Typography
+                          variant="caption"
+                          component="div"
+                          color="text.secondary"
+                        >
                           Qty: {item.quantity}
                         </Typography>
                         <Typography variant="body2" color="primary">
@@ -606,39 +719,69 @@ const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
             <Divider sx={{ my: 2 }} />
 
             <Box sx={{ mb: 1 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+              >
                 <Typography variant="body2">Subtotal</Typography>
-                <Typography variant="body2">{formatPrice(calculateSubtotal())}</Typography>
-              </Box>
-
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                <Typography variant="body2">Shipping</Typography>
                 <Typography variant="body2">
-                  {calculateShipping() === 0 ? "Free" : formatPrice(calculateShipping())}
+                  {formatPrice(calculateSubtotal())}
                 </Typography>
               </Box>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+              >
+                <Typography variant="body2">Shipping</Typography>
+                <Typography variant="body2">
+                  {calculateShipping() === 0
+                    ? "Free"
+                    : formatPrice(calculateShipping())}
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}
+              >
                 <Typography variant="body2">Tax (10%)</Typography>
-                <Typography variant="body2">{formatPrice(calculateTax())}</Typography>
+                <Typography variant="body2">
+                  {formatPrice(calculateTax())}
+                </Typography>
               </Box>
 
               <Divider sx={{ my: 1 }} />
 
-              <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
+              <Box
+                sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}
+              >
                 <Typography variant="h6">Total</Typography>
-                <Typography variant="h6" color="primary" sx={{ fontWeight: "bold" }}>
+                <Typography
+                  variant="h6"
+                  color="primary"
+                  sx={{ fontWeight: "bold" }}
+                >
                   {formatPrice(calculateTotal())}
                 </Typography>
               </Box>
             </Box>
 
             <Box sx={{ mt: 3, pt: 2, borderTop: "1px solid #eee" }}>
-              <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 2,
+                  mb: 1,
+                }}
+              >
                 <Chip icon={<Lock />} label="Secure" size="small" />
                 <Chip label="SSL Encrypted" size="small" />
               </Box>
-              <Typography variant="caption" component="div" color="text.secondary" align="center">
+              <Typography
+                variant="caption"
+                component="div"
+                color="text.secondary"
+                align="center"
+              >
                 Payment secured by Stripe
               </Typography>
             </Box>

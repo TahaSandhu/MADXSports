@@ -12,11 +12,7 @@ const SuccessPage = () => {
   const handleNavigateToHome = () => {
     clearCart();
     router.push('/');
-  };
-
-  useEffect(() => {
-    clearCart();
-  }, []);
+  }
 
   return (
     <Box
