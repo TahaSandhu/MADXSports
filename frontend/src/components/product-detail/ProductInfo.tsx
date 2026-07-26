@@ -25,6 +25,7 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { useCart } from "@/core/context/CartContext";
 import { useRouter } from "next/router";
 import SizeChartModal from "./SizeChartModal";
+import toast from "react-hot-toast";
 
 interface ProductInfoProps {
   product: any;
@@ -44,17 +45,23 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
   const colorsFromApi = product?.colors || ["Black", "White", "Red", "Blue", "Green"];
   
   const colorMap: Record<string, string> = {
-    "Black": "#000000",
-    "White": "#ffffff",
-    "Red": "#f44336",
-    "Blue": "#2196f3",
-    "Green": "#4caf50",
+    "black": "#000000",
+    "white": "#ffffff",
+    "red": "#ff1744",
+    "blue": "#2196f3",
+    "green": "#4caf50",
     "golden": "#FFD700",
+    "yellow": "#ffeb3b",
+    "grey": "#888888",
+    "gray": "#888888",
+    "orange": "#ff9800",
+    "purple": "#9c27b0",
+    "pink": "#e91e63",
   };
 
   const colors = colorsFromApi.map((c: string) => ({
     name: c,
-    code: colorMap[c] || "#888888" // Fallback color
+    code: colorMap[c.toLowerCase()] || (c.startsWith("#") ? c : "#888888")
   }));
 
   const handleQuantityChange = (type: "inc" | "dec") => {
@@ -203,7 +210,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
                     ? "3px solid #fff"
                     : "2px solid rgba(255,255,255,0.2)",
                 outline:
-                  selectedColor === color.name ? "2px solid #1976d2" : "none",
+                  selectedColor === color.name ? "2px solid #ff1744" : "none",
                 transition: "all 0.2s",
                 "&:hover": {
                   transform: "scale(1.15)",
@@ -295,7 +302,15 @@ const ProductInfo: React.FC<ProductInfoProps> = ({ product }) => {
           {isAdded ? "Added to Cart!" : "Add to Cart"}
         </Button>
 
-        <Button variant="outlined" fullWidth startIcon={<FlashOnIcon />}>
+        <Button
+          variant="outlined"
+          fullWidth
+          startIcon={<FlashOnIcon />}
+          onClick={() => {
+            toast.error("Checkout is temporarily disabled. Please contact us to complete your order.");
+            router.push("/contact");
+          }}
+        >
           Buy Now
         </Button>
       </Stack>

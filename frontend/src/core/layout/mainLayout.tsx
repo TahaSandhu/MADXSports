@@ -18,7 +18,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <Box>
       <Navbar />
-      {!isDetailProductRoute && !isCheckoutRoute && <HeroCarousel key={pathname} />}
+      {pathname === "/" && <HeroCarousel key={pathname} />}
       <Box sx={{ flexGrow: 1 }}>{children}</Box>
       <WhatsAppButton phoneNumber="+447480396846" message="Hi, I need help!" />
       <Footer />

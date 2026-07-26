@@ -10,10 +10,14 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    let token = null;
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("token");
+    }
+
+    if (token && token !== "null" && token !== "undefined") {
+      config.headers.Authorization = token;
     }
 
     return config;
@@ -23,12 +27,7 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      console.log("Unauthorized - redirect to login later");
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default api;

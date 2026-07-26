@@ -1,23 +1,11 @@
 
 import { useState, useEffect, useMemo } from 'react';
-import axios from "axios";
+import api from "@/lib/api";
 import { Product } from './types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const CREATE_URL = `${API_URL}/products/create`;
-const GET_URL = `${API_URL}/products/allProducts`;
-const UPDATE_URL = `${API_URL}/products/update`;
-
-const MOCK_PRODUCTS: any[] = Array.from({ length: 50 }, (_, i) => ({
-  id: `${i + 1}`,
-  name: `Premium Product ${i + 1}`,
-  description: `Experience luxury like never before with our signature Product ${i + 1}. Performance meets aesthetics in this exclusive release.`,
-  price: Math.floor(Math.random() * 500) + 99,
-  image: `https://picsum.photos/seed/product${i + 1}/600/800`,
-  category: i % 3 === 0 ? 'Digital' : i % 3 === 1 ? 'Fashion' : 'Tech',
-  isTrending: i % 5 === 0,
-  rating: 4 + Math.random(),
-}));
+const CREATE_URL = `/products/create`;
+const GET_URL = `/products/allProducts`;
+const UPDATE_URL = `/products/update`;
 
 export function useProducts(searchTerm: string = '', page: number = 1, pageSize: number = 12) {
   const [loading, setLoading] = useState(true);
@@ -30,7 +18,7 @@ export function useProducts(searchTerm: string = '', page: number = 1, pageSize:
     const fetchAllProducts = async () => {
       setIsInitialLoading(true);
       try {
-        const res = await axios.get(GET_URL);
+        const res = await api.get(GET_URL);
         const products: Product[] = res.data;
         setAllProducts(products);
       } catch (error) {
@@ -75,7 +63,7 @@ export function useProducts(searchTerm: string = '', page: number = 1, pageSize:
 export const useProduct = () => {
   const createProduct = async (data: Product) => {
     try {
-      const res = await axios.post(CREATE_URL, data);
+      const res = await api.post(CREATE_URL, data);
       return res.data;
     } catch (error: any) {
       throw new Error(error?.response?.data?.message || "Error creating product");
@@ -84,7 +72,7 @@ export const useProduct = () => {
 
   const updateProduct = async (id: string, data: Product) => {
     try {
-      const res = await axios.put(`${UPDATE_URL}/${id}`, data);
+      const res = await api.put(`${UPDATE_URL}/${id}`, data);
       return res.data;
     } catch (error: any) {
       throw new Error(error?.response?.data?.message || "Error updating product");
@@ -93,7 +81,7 @@ export const useProduct = () => {
 
   const getProductById = async (id: string) => {
     try {
-      const res = await axios.get(`${GET_URL}/${id}`);
+      const res = await api.get(`${GET_URL}/${id}`);
       return res.data;
     } catch (error: any) {
       throw new Error(error?.response?.data?.message || "Error fetching product");
@@ -106,7 +94,7 @@ export const useProduct = () => {
 export const useProductsApi = () => {
   const getProducts = async () => {
     try {
-      const res = await axios.get(GET_URL);
+      const res = await api.get(GET_URL);
       return res.data;
     } catch (error: any) {
       throw new Error(

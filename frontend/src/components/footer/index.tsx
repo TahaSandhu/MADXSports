@@ -39,19 +39,23 @@ const Footer = () => {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               The premium destination for all your sports and combat gear needs.
             </Typography>
-            <Box sx={{ mb: "1rem" }}>
+            <Box sx={{ mb: "1.5rem" }}>
               <Typography
                 variant="h6"
                 color="primary"
                 gutterBottom
                 sx={{ fontWeight: "bold" }}
               >
-                Addresses
+                Contact & Addresses
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                <strong>UK Office:</strong>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, lineHeight: 1.6 }}>
+                <strong>UK Office Address:</strong> 246 Beechwood Road, Luton, UK
                 <br />
-                246 Beechwood Road, Luton, UK
+                <strong>UK Office No:</strong> 0044 7480396846
+                <br />
+                <strong>Pakistan Office No:</strong> 0092 334 1450990
+                <br />
+                <strong>Email:</strong> hassan@madxsports.com
               </Typography>
             </Box>
             <Box sx={{ display: "flex", gap: 2 }}>
@@ -154,7 +158,7 @@ const Footer = () => {
               Terms of Service
             </Link>
             <Link
-              href="#"
+              href="/contact"
               color="inherit"
               underline="hover"
               sx={{ display: "block", mb: 1, fontSize: "0.9rem" }}

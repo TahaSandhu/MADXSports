@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 import {
   Drawer,
   Box,
@@ -74,7 +75,9 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
   };
 
   const handleCheckout = () => {
-    router.push(PROTECTED_ROUTES[0]);
+    toast.error("Checkout is temporarily disabled. Please contact us to complete your order.");
+    onClose();
+    router.push("/contact");
   };
 
   return (

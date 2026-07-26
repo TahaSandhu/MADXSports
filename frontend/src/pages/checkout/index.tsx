@@ -1,13 +1,22 @@
-import CheckoutPage from "@/components/cart/CheckoutPage";
-import CheckoutLayout from "@/core/layout/checkoutLayout";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 import type { ReactElement } from "react";
+import Loader from "@/components/common/Loader";
 
 const Checkout = () => {
-  return <CheckoutPage />;
+  const router = useRouter();
+
+  useEffect(() => {
+    toast.error("Checkout is temporarily disabled. Please contact us to complete your order.");
+    router.push("/contact");
+  }, [router]);
+
+  return <Loader />;
 };
 
 Checkout.getLayout = function (page: ReactElement) {
-  return <CheckoutLayout>{page}</CheckoutLayout>;
+  return page;
 };
 
 export default Checkout;

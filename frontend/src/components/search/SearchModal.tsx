@@ -8,6 +8,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 
 interface SearchModalProps {
   open: boolean;
@@ -20,10 +21,12 @@ interface SearchFormData {
 
 const SearchModal: React.FC<SearchModalProps> = ({ open, onClose }) => {
   const { register, handleSubmit, reset } = useForm<SearchFormData>();
+  const router = useRouter();
 
   const onSubmit = (data: SearchFormData) => {
-    console.log("Searching for:", data.query);
-    // Add navigation or search logic here
+    if (data.query.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(data.query.trim())}`);
+    }
     onClose();
     reset();
   };
