@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import connectDataBase from "../../../core/db";
-import UserModel from "../../../models/auth/User";
-import { generateToken, setAuthCookie } from "../../../core/jwt";
+import connectDataBase from "../../../../core/db";
+import UserModel from "../../../../models/auth/User";
+import { generateToken } from "../../../../core/jwt";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -35,12 +35,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     user.otpExpires = null;
     await user.save();
 
+    // Frontend expects { user, token } in the body - it stores token in
+    // localStorage and sends it back as a raw Authorization header (no cookie).
     const token = generateToken(user);
-    setAuthCookie(res, token);
 
     return res.status(200).json({
       message: "Verified successfully",
       user: { id: user._id, email: user.email, role: user.role },
+      token,
     });
   } catch (err) {
     console.error("verify-otp error:", err);

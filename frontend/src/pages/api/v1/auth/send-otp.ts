@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import connectDataBase from "../../../core/db";
-import UserModel from "../../../models/auth/User";
-import { sendOtpEmail } from "../../../core/mailer";
+import connectDataBase from "../../../../core/db";
+import UserModel from "../../../../models/auth/User";
+import { sendOtpEmail } from "../../../../core/mailer";
 
 const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ message: "OTP sent to your email" });
   } catch (err) {
-    console.error("request-otp error:", err);
+    console.error("send-otp error:", err);
     return res.status(500).json({ message: "Something went wrong" });
   }
 }

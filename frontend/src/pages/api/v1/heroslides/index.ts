@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
-import connectDataBase from "../../../core/db";
-import HeroSlideModel from "../../../models/heroSlide/HeroSlide";
-import { uploadMultipleImages } from "../../../core/cloudinaryUpload";
-import { requireAdmin } from "../../../middleware/auth";
+import connectDataBase from "../../../../core/db";
+import HeroSlideModel from "../../../../models/heroSlide/HeroSlide";
+import { uploadMultipleImages } from "../../../../core/cloudinaryUpload";
+import { requireAdmin } from "../../../../middleware/auth";
 
 export const config = {
   api: {

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import connectDataBase from "../../../core/db";
-import UserModel from "../../../models/auth/User";
-import { requireAuth } from "../../../middleware/auth";
+import connectDataBase from "../../../../core/db";
+import UserModel from "../../../../models/auth/User";
+import { requireAuth } from "../../../../middleware/auth";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
