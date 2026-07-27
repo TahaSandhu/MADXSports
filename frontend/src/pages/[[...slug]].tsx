@@ -8,15 +8,26 @@ import ContactPage from "@/components/contact/ContactPage";
 
 const CatchAllPage = () => {
   const router = useRouter();
-  const { slug, filter, search } = router.query;
-  
-  // Since slug is optional catch-all, it can be undefined or a string/string[]
-  const slugArray = slug ? (Array.isArray(slug) ? slug : [slug]) : [];
 
-  const { trendingProducts, newReleases, loading } = useProducts();
+  const { slug, filter, search } = router.query;
+
+  if (!router.isReady) {
+    return <Loader />;
+  }
+
+  const slugArray = slug
+    ? Array.isArray(slug)
+      ? slug
+      : [slug]
+    : [];
+
+  const { trendingProducts = [], newReleases = [], loading } = useProducts();
 
   const isHomePage = slugArray.length === 0;
-  const isContactPage = slugArray.length === 1 && slugArray[0].toLowerCase() === "contact";
+
+  const isContactPage =
+    slugArray.length === 1 &&
+    slugArray[0].toLowerCase() === "contact";
 
   if (loading && isHomePage) {
     return <Loader />;
@@ -26,12 +37,21 @@ const CatchAllPage = () => {
     return (
       <>
         <TrendingBar />
+
         {trendingProducts.length > 0 && (
-          <TrendingCarousel products={trendingProducts} title="Trending Now" />
+          <TrendingCarousel
+            products={trendingProducts}
+            title="Trending Now"
+          />
         )}
+
         <ProductList slug={[]} />
+
         {newReleases.length > 0 && (
-          <TrendingCarousel products={newReleases} title="New Releases" />
+          <TrendingCarousel
+            products={newReleases}
+            title="New Releases"
+          />
         )}
       </>
     );
@@ -41,8 +61,9 @@ const CatchAllPage = () => {
     return <ContactPage />;
   }
 
-  // Otherwise, we are on a navigation category page or a general shop page
-  const isShopPage = slugArray.length === 1 && slugArray[0].toLowerCase() === "shop";
+  const isShopPage =
+    slugArray.length === 1 &&
+    slugArray[0].toLowerCase() === "shop";
 
   return (
     <ProductList
