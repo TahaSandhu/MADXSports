@@ -75,37 +75,39 @@ const ProductForm = () => {
     setColors(colors.filter((x) => x !== c));
   };
 
-  const onSubmit = async (data: Product) => {
-    try {
-      setUploading(true);
+const onSubmit = async (data: Product) => {
+  try {
+    setUploading(true);
 
-      const formData = new FormData();
+    const formData = new FormData();
 
-      formData.append("name", data.name);
-      formData.append("price", String(data.price));
-      formData.append("description", data.description);
-      formData.append("rating", String(data.rating || 0));
-      formData.append("category", data.category || "");
-      formData.append("colors", JSON.stringify(colors));
-      formData.append("variants", JSON.stringify(data.variants));
+    formData.append("name", data.name);
+    formData.append("price", String(data.price));
+    formData.append("rating", String(data.rating));
+    formData.append("description", data.description);
+    formData.append("category", data?.category || "");
+    formData.append("colors", JSON.stringify(colors));
+    formData.append("variants", JSON.stringify(data.variants));
+    formData.append("isTrending", String(data.isTrending));
+    formData.append("isNewRelease", String(data.isNewRelease));
 
-      imageFiles.forEach((file) => {
-        formData.append("images", file);
-      });
+    imageFiles.forEach((file) => {
+      formData.append("images", file);
+    });
 
-      await createProduct(formData as any);
+    await createProduct(formData);
 
-      reset();
-      setImageFiles([]);
-      imagePreviews.forEach((p) => URL.revokeObjectURL(p));
-      setImagePreviews([]);
-      setColors([]);
-    } catch (e: any) {
-      alert(e.message);
-    } finally {
-      setUploading(false);
-    }
-  };
+    reset();
+    setColors([]);
+    setImageFiles([]);
+    imagePreviews.forEach((x) => URL.revokeObjectURL(x));
+    setImagePreviews([]);
+  } catch (err: any) {
+    alert(err.message);
+  } finally {
+    setUploading(false);
+  }
+};
 
   return (
     <Box

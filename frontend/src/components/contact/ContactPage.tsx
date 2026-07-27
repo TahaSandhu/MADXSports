@@ -29,10 +29,27 @@ const ContactPage = () => {
   const { register, handleSubmit, reset } = useForm<ContactFormData>();
   const theme = useTheme();
 
-  const onSubmit = (data: ContactFormData) => {
-    toast.success(`Thank you ${data.name}, your message has been sent successfully!`);
-    reset();
-  };
+const onSubmit = async (data: ContactFormData) => {
+  try {
+    const res = await fetch("https://formspree.io/f/xrenrvyp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Message sent successfully!");
+      reset();
+    } else {
+      toast.error("Failed to send message.");
+    }
+  } catch (error) {
+    toast.error("Something went wrong.");
+  }
+};
 
   return (
     <Box sx={{ bgcolor: "background.default", color: "text.primary", py: 8, minHeight: "80vh" }}>

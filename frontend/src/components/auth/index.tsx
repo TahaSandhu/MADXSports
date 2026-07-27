@@ -8,7 +8,6 @@ import {
   Typography,
   Paper,
   Container,
-  Divider,
   Alert,
   CircularProgress,
   InputAdornment,
@@ -17,55 +16,79 @@ import {
   Zoom,
 } from "@mui/material";
 import {
-  Google as GoogleIcon,
-  Email as EmailIcon,
+  Person as PersonIcon,
   Lock as LockIcon,
-  ArrowBack as ArrowBackIcon,
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
-import { useSendOtp, useVerifyOtp } from "@/hooks/useAuth";
+import Link from "next/link";
 
-type EmailForm = { email: string };
-type OtpForm = { otp: string };
+type SignInForm = {
+  username: string;
+  password: string;
+};
 
 export default function SignInPage() {
   const router = useRouter();
-  const [step, setStep] = useState<"email" | "otp">("email");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { sendOtp, loading: sendLoading } = useSendOtp();
-  const { verifyOtp, loading: verifyLoading } = useVerifyOtp();
-
-  const emailForm = useForm<EmailForm>();
-  const otpForm = useForm<OtpForm>();
-
-  const emailValue = emailForm.watch("email");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInForm>();
 
   const handleLogoClick = () => {
     router.push("/");
   };
 
-  const googleLogin = () => {
-    window.location.href = "/api/auth/google";
-  };
+const onSubmit = async (data: SignInForm) => {
+  setLoading(true);
+  setError(null);
 
-  const handleSendOtp = async (data: EmailForm) => {
-    await sendOtp(data.email);
-    setStep("otp");
-  };
+  try {
+    const res = await fetch("/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+    email: data.username,
+    password: data.password,
+  }),
+});
 
-  const handleVerifyOtp = async (data: OtpForm) => {
-    const result = await verifyOtp(emailValue, data.otp);
-    if (result) {
-      router.push("/");
+console.log("Status:", res.status);
+
+const result = await res.json();
+
+console.log("Response:", result);
+    if (!res.ok) {
+      setError(result.message || "Invalid email or password.");
+      setLoading(false);
+      return;
     }
-  };
 
-  const handleBackToEmail = () => {
-    setStep("email");
-    setError(null);
-    otpForm.reset();
-  };
+    // Save token
+    if (result.token) {
+      localStorage.setItem("token", result.token);
+    }
 
+    // Save user (optional)
+    if (result.user) {
+      localStorage.setItem("user", JSON.stringify(result.user));
+    }
+
+    router.push("/");
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <Box
       sx={{
@@ -144,9 +167,9 @@ export default function SignInPage() {
                 Welcome Back
               </Typography>
 
-              <Typography variant="body2" sx={{ mt: 1, color: "#b0b0b0" }}>
-                Sign in to continue to your account
-              </Typography>
+              <Link href="/auth/signup" style={{ marginTop: 1, color: "#b0b0b0", cursor: "pointer" }}>
+                Sign up if you don't have an account
+              </Link>
             </Box>
 
             <Fade in={!!error}>
@@ -164,202 +187,122 @@ export default function SignInPage() {
               </Alert>
             </Fade>
 
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={googleLogin}
-              sx={{
-                mb: 3,
-                py: 1.5,
-                borderRadius: 2,
-                textTransform: "none",
-                fontSize: "1rem",
-                borderColor: "rgba(255,0,0,0.5)",
-                color: "#ffffff",
-                "&:hover": {
-                  borderColor: "#ff0000",
-                  backgroundColor: "rgba(255,0,0,0.1)",
-                },
-              }}
-              startIcon={<GoogleIcon />}
-            >
-              Continue with Google
-            </Button>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+              <TextField
+                fullWidth
+                label="Username"
+                autoComplete="username"
+                {...register("username", {
+                  required: "Username is required",
+                })}
+                error={!!errors.username}
+                helperText={errors.username?.message}
+                disabled={loading}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PersonIcon sx={{ color: "#ff4444" }} />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                sx={{
+                  mb: 2,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    backgroundColor: "#2a2a2a",
+                    "& fieldset": { borderColor: "rgba(255,0,0,0.3)" },
+                    "&:hover fieldset": {
+                      borderColor: "rgba(255,0,0,0.5)",
+                    },
+                    "&.Mui-focused fieldset": { borderColor: "#ff0000" },
+                  },
+                  "& .MuiInputLabel-root": { color: "#b0b0b0" },
+                  "& .MuiInputLabel-root.Mui-focused": { color: "#ff4444" },
+                  "& .MuiInputBase-input": { color: "#ffffff" },
+                  "& .MuiFormHelperText-root": { color: "#ff4444" },
+                }}
+              />
 
-            <Divider sx={{ my: 3, borderColor: "rgba(255,255,255,0.1)" }}>
-              <Typography variant="caption" sx={{ color: "#b0b0b0" }}>
-                OR
-              </Typography>
-            </Divider>
+              <TextField
+                fullWidth
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                {...register("password", {
+                  required: "Password is required",
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                disabled={loading}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon sx={{ color: "#ff4444" }} />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          sx={{ color: "#b0b0b0" }}
+                        >
+                          {showPassword ? (
+                            <VisibilityOffIcon />
+                          ) : (
+                            <VisibilityIcon />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+                sx={{
+                  mb: 2,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    backgroundColor: "#2a2a2a",
+                    "& fieldset": { borderColor: "rgba(255,0,0,0.3)" },
+                    "&:hover fieldset": {
+                      borderColor: "rgba(255,0,0,0.5)",
+                    },
+                    "&.Mui-focused fieldset": { borderColor: "#ff0000" },
+                  },
+                  "& .MuiInputLabel-root": { color: "#b0b0b0" },
+                  "& .MuiInputLabel-root.Mui-focused": { color: "#ff4444" },
+                  "& .MuiInputBase-input": { color: "#ffffff" },
+                  "& .MuiFormHelperText-root": { color: "#ff4444" },
+                }}
+              />
 
-            <Fade in={step === "email"} unmountOnExit>
-              <Box>
-                <form onSubmit={emailForm.handleSubmit(handleSendOtp)}>
-                  <TextField
-                    fullWidth
-                    label="Email Address"
-                    type="email"
-                    {...emailForm.register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "Invalid email address",
-                      },
-                    })}
-                    error={!!emailForm.formState.errors.email}
-                    helperText={emailForm.formState.errors.email?.message}
-                    disabled={sendLoading}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <EmailIcon sx={{ color: "#ff4444" }} />
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                    sx={{
-                      mb: 2,
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-                        backgroundColor: "#2a2a2a",
-                        "& fieldset": { borderColor: "rgba(255,0,0,0.3)" },
-                        "&:hover fieldset": {
-                          borderColor: "rgba(255,0,0,0.5)",
-                        },
-                        "&.Mui-focused fieldset": { borderColor: "#ff0000" },
-                      },
-                      "& .MuiInputLabel-root": { color: "#b0b0b0" },
-                      "& .MuiInputLabel-root.Mui-focused": { color: "#ff4444" },
-                      "& .MuiInputBase-input": { color: "#ffffff" },
-                      "& .MuiFormHelperText-root": { color: "#ff4444" },
-                    }}
-                  />
-
-                  <Button
-                    fullWidth
-                    type="submit"
-                    variant="contained"
-                    disabled={sendLoading}
-                    sx={{
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontSize: "1rem",
-                      background:
-                        "linear-gradient(135deg, #ff0000 0%, #8b0000 100%)",
-                      "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #cc0000 0%, #660000 100%)",
-                      },
-                    }}
-                  >
-                    {sendLoading ? (
-                      <CircularProgress size={24} sx={{ color: "#ffffff" }} />
-                    ) : (
-                      "Send OTP"
-                    )}
-                  </Button>
-                </form>
-              </Box>
-            </Fade>
-
-            <Fade in={step === "otp"} unmountOnExit>
-              <Box>
-                <IconButton
-                  onClick={handleBackToEmail}
-                  sx={{ mb: 2, color: "#ff4444" }}
-                  disabled={verifyLoading}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-
-                <Typography
-                  variant="body2"
-                  sx={{ mb: 2, textAlign: "center", color: "#b0b0b0" }}
-                >
-                  Enter the 6-digit code sent to{" "}
-                  <strong style={{ color: "#ff4444" }}>{emailValue}</strong>
-                </Typography>
-
-                <form onSubmit={otpForm.handleSubmit(handleVerifyOtp)}>
-                  <TextField
-                    fullWidth
-                    label="Verification Code"
-                    {...otpForm.register("otp", {
-                      required: "OTP is required",
-                      minLength: { value: 6, message: "OTP must be 6 digits" },
-                      maxLength: { value: 6, message: "OTP must be 6 digits" },
-                      pattern: {
-                        value: /^[0-9]+$/,
-                        message: "OTP must contain only numbers",
-                      },
-                    })}
-                    error={!!otpForm.formState.errors.otp}
-                    helperText={otpForm.formState.errors.otp?.message}
-                    disabled={verifyLoading}
-                    slotProps={{
-                      input: {
-                        sx: {
-                          letterSpacing: 4,
-                          fontSize: "1.2rem",
-                          textAlign: "center",
-                        },
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockIcon sx={{ color: "#ff4444" }} />
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                    sx={{
-                      mb: 2,
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-                        backgroundColor: "#2a2a2a",
-                        "& fieldset": { borderColor: "rgba(255,0,0,0.3)" },
-                        "&:hover fieldset": {
-                          borderColor: "rgba(255,0,0,0.5)",
-                        },
-                        "&.Mui-focused fieldset": { borderColor: "#ff0000" },
-                      },
-                      "& .MuiInputLabel-root": { color: "#b0b0b0" },
-                      "& .MuiInputLabel-root.Mui-focused": { color: "#ff4444" },
-                      "& .MuiInputBase-input": {
-                        color: "#ffffff",
-                        textAlign: "center",
-                      },
-                      "& .MuiFormHelperText-root": { color: "#ff4444" },
-                    }}
-                  />
-
-                  <Button
-                    fullWidth
-                    type="submit"
-                    variant="contained"
-                    disabled={verifyLoading}
-                    sx={{
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: "none",
-                      fontSize: "1rem",
-                      background:
-                        "linear-gradient(135deg, #ff0000 0%, #8b0000 100%)",
-                      "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #cc0000 0%, #660000 100%)",
-                      },
-                    }}
-                  >
-                    {verifyLoading ? (
-                      <CircularProgress size={24} sx={{ color: "#ffffff" }} />
-                    ) : (
-                      "Verify & Sign In"
-                    )}
-                  </Button>
-                </form>
-              </Box>
-            </Fade>
+              <Button
+                fullWidth
+                type="submit"
+                variant="contained"
+                disabled={loading}
+                sx={{
+                  py: 1.5,
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontSize: "1rem",
+                  background:
+                    "linear-gradient(135deg, #ff0000 0%, #8b0000 100%)",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, #cc0000 0%, #660000 100%)",
+                  },
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: "#ffffff" }} />
+                ) : (
+                  "Sign In"
+                )}
+              </Button>
+            </form>
 
             <Typography
               variant="caption"

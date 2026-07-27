@@ -10,12 +10,12 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const { getProductById } = useProduct();
-
   useEffect(() => {
     const fetchProduct = async () => {
       if (id) {
         try {
           const res = await getProductById(id as string);
+          console.log("t12```", res);
           setProduct(res);
         } catch (error) {
           console.error("Error fetching product:", error);

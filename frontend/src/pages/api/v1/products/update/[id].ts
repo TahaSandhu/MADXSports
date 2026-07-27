@@ -3,31 +3,60 @@ import connectDataBase from "../../../../../core/db";
 import ProductModel from "../../../../../models/product/Product";
 import { requireAdmin } from "../../../../../middleware/auth";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method !== "PUT") {
     res.setHeader("Allow", ["PUT"]);
-    return res.status(405).json({ message: `Method ${req.method} not allowed` });
+    return res.status(405).json({
+      message: `Method ${req.method} not allowed`,
+    });
   }
 
+  // Check Admin Authentication
   const auth = requireAdmin(req, res);
-  if (!auth) return;
+  if (!auth) {
+    return;
+  }
 
   try {
     await connectDataBase();
+
     const { id } = req.query;
 
-    const product = await ProductModel.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+    if (!id) {
+      return res.status(400).json({
+        message: "Product ID is required",
+      });
     }
 
-    return res.status(200).json(product);
-  } catch (err) {
-    console.error("update product error:", err);
-    return res.status(500).json({ message: "Error updating product" });
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    console.error("Update Product Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 }

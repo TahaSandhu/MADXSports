@@ -1,22 +1,27 @@
 import { useState } from "react";
-import api from "@/lib/api";
 
 export const useCheckout = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   const createOrder = async (payload: any) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.post("/checkout/create-order", payload);
-      return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Something went wrong");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    setLoading(false);
+
+    return {
+      success: true,
+      message: "Order created successfully",
+      order: {
+        _id: "ORD-1001",
+        ...payload,
+        paymentStatus: "pending",
+        deliveryStatus: "pending",
+        createdAt: new Date(),
+      },
+    };
   };
 
   return {
@@ -26,40 +31,102 @@ export const useCheckout = () => {
   };
 };
 
-
 export const useOrdersApi = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
+
+  const dummyOrders = [
+    {
+      _id: "ORD-1001",
+      email: "hassan@madxsports.com",
+      firstName: "Hassan",
+      lastName: "Ali",
+      total: 120,
+      paymentStatus: "succeeded",
+      deliveryStatus: "pending",
+      createdAt: "2025-08-01",
+    },
+    {
+      _id: "ORD-1002",
+      email: "john@example.com",
+      firstName: "John",
+      lastName: "Doe",
+      total: 250,
+      paymentStatus: "succeeded",
+      deliveryStatus: "processing",
+      createdAt: "2025-08-02",
+    },
+    {
+      _id: "ORD-1003",
+      email: "jane@example.com",
+      firstName: "Jane",
+      lastName: "Smith",
+      total: 90,
+      paymentStatus: "pending",
+      deliveryStatus: "delivered",
+      createdAt: "2025-08-03",
+    },
+    {
+      _id: "ORD-1004",
+      email: "alex@example.com",
+      firstName: "Alex",
+      lastName: "Brown",
+      total: 320,
+      paymentStatus: "succeeded",
+      deliveryStatus: "processing",
+      createdAt: "2025-08-04",
+    },
+    {
+      _id: "ORD-1005",
+      email: "emma@example.com",
+      firstName: "Emma",
+      lastName: "Wilson",
+      total: 180,
+      paymentStatus: "failed",
+      deliveryStatus: "cancelled",
+      createdAt: "2025-08-05",
+    },
+  ];
 
   const getAllOrders = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.get("/checkout/orders");
-      return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Something went wrong");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    setLoading(false);
+
+    return dummyOrders;
   };
 
   const getDashboardStats = async () => {
-  try {
     setLoading(true);
-    const res = await api.get("/checkout/orders");
-    const orders = res.data;
 
-    const totalOrders = orders.length;
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const pending = orders.filter((o: any) => o.deliveryStatus === "pending").length;
-    const processing = orders.filter((o: any) => o.deliveryStatus === "processing").length;
-    const delivered = orders.filter((o: any) => o.deliveryStatus === "delivered").length;
+    const totalOrders = dummyOrders.length;
 
-    const totalRevenue = orders.reduce((sum: number, o: any) => sum + o.total, 0);
+    const pending = dummyOrders.filter(
+      (o) => o.deliveryStatus === "pending"
+    ).length;
 
-    const totalCustomers = new Set(orders.map((o: any) => o.email)).size;
+    const processing = dummyOrders.filter(
+      (o) => o.deliveryStatus === "processing"
+    ).length;
+
+    const delivered = dummyOrders.filter(
+      (o) => o.deliveryStatus === "delivered"
+    ).length;
+
+    const totalRevenue = dummyOrders.reduce(
+      (sum, o) => sum + o.total,
+      0
+    );
+
+    const totalCustomers = new Set(
+      dummyOrders.map((o) => o.email)
+    ).size;
+
+    setLoading(false);
 
     return {
       totalOrders,
@@ -68,24 +135,26 @@ export const useOrdersApi = () => {
       delivered,
       totalRevenue,
       totalCustomers,
-      recentOrders: orders.slice(0, 5),
+      recentOrders: dummyOrders,
     };
-  } catch (err: any) {
-    setError(err.message);
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const updateDeliveryStatus = async (id: string, status: string) => {
-    try {
-      await api.patch(`/checkout/${id}/delivery-status`, { status });
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Update failed");
-      throw err;
-    }
   };
 
-  return { getAllOrders, getDashboardStats, updateDeliveryStatus, loading, error };
+  const updateDeliveryStatus = async (
+    id: string,
+    status: string
+  ) => {
+    console.log("Updated:", id, status);
+
+    return {
+      success: true,
+    };
+  };
+
+  return {
+    getAllOrders,
+    getDashboardStats,
+    updateDeliveryStatus,
+    loading,
+    error,
+  };
 };

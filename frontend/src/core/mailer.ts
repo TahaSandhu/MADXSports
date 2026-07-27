@@ -1,28 +1,38 @@
 import nodemailer from "nodemailer";
-import { generateOrderConfirmationTemplate, generateOtpEmailTemplate } from "./emailTemplate";
+import { generateVerificationEmailTemplate } from "./emailTemplate";
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-export const sendOtpEmail = async (email: string, otp: string) => {
-    return transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Your MADXSports Verification Code",
-        html: generateOtpEmailTemplate(otp),
-    });
+export const sendVerificationEmail = async (
+  email: string,
+  token: string
+) => {
+  const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/v1/auth/verify-email?token=${token}`;
+
+  return transporter.sendMail({
+    from: `"MADXSports" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Verify your MADXSports account",
+    html: generateVerificationEmailTemplate(email, verifyUrl),
+  });
 };
 
-export const sendOrderConfirmationEmail = async (email: string, order: any) => {
-    return transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Your MADXSports Order Confirmation",
-        html: generateOrderConfirmationTemplate(order),
-    });
-};
+// export const sendOrderConfirmationEmail = async (
+//   email: string,
+//   html: string
+// ) => {
+//   return transporter.sendMail({
+//     from: `"MADXSports" <${process.env.EMAIL_USER}>`,
+//     to: email,
+//     subject: "Order Confirmation",
+//     html,
+//   });
+// };
