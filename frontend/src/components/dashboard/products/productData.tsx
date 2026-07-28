@@ -34,6 +34,16 @@ const ProductRow: React.FC<{
   onDelete: (id: string) => void;
 }> = ({ product, onEdit, onDelete }) => {
   const [open, setOpen] = useState(false);
+  const { deleteProduct } = useProductsApi();
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteProduct(id);
+      onDelete(id);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
 
   return (
     <>
@@ -56,7 +66,7 @@ const ProductRow: React.FC<{
             <IconButton onClick={() => onEdit(product)} color="primary">
               <EditIcon />
             </IconButton>
-            <IconButton onClick={() => onDelete(product._id)} color="error">
+            <IconButton onClick={() => handleDelete(product._id)} color="error">
               <DeleteIcon />
             </IconButton>
           </Box>

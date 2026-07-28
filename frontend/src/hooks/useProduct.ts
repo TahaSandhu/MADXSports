@@ -1,10 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import api from "@/lib/api";
 import { Product } from "./types";
 
-const CREATE_URL = "/products/create";
 const GET_URL = "/products/allProducts";
-const UPDATE_URL = "/products/update";
 
 export function useProducts(
   searchTerm: string = "",
@@ -17,25 +15,25 @@ export function useProducts(
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAllProducts = async () => {
-      try {
-        setIsInitialLoading(true);
+  const fetchProducts = useCallback(async () => {
+    try {
+      setIsInitialLoading(true);
 
-        const res = await api.get(GET_URL, {
-          withCredentials: true,
-        });
+      const res = await api.get(GET_URL, {
+        withCredentials: true,
+      });
 
-        setAllProducts(res.data || []);
-      } catch (error) {
-        console.error("Fetch Products Error:", error);
-      } finally {
-        setIsInitialLoading(false);
-      }
-    };
-
-    fetchAllProducts();
+      setAllProducts(res.data || []);
+    } catch (error) {
+      console.error("Fetch Products Error:", error);
+    } finally {
+      setIsInitialLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   useEffect(() => {
     if (isInitialLoading) return;
@@ -73,6 +71,7 @@ export function useProducts(
     total,
     trendingProducts,
     newReleases,
+    refetchProducts: fetchProducts,
   };
 }
 
@@ -97,6 +96,8 @@ export const useProduct = () => {
     return res.data;
   };
 
+
+
   return {
     createProduct,
     updateProduct,
@@ -113,15 +114,28 @@ export const useProductsApi = () => {
 
       return res.data;
     } catch (error: any) {
-      console.error(error.response);
-
       throw new Error(
         error?.response?.data?.message || "Error fetching products"
       );
     }
   };
 
+  const deleteProduct = async (id: string) => {
+    try {
+      const res = await api.put(`/products/delete/${id}`, null, {
+        withCredentials: true,
+      });
+
+      return res.data;
+    } catch (error: any) {
+      throw new Error(
+        error?.response?.data?.message || "Error deleting product"
+      );
+    }
+  };
+
   return {
     getProducts,
+    deleteProduct,
   };
-};
+};  
