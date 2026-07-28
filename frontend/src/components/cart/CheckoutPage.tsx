@@ -243,7 +243,7 @@ const CheckoutForm = () => {
       });
 
       const result = await stripe.confirmCardPayment(
-        orderResponse.clientSecret,
+        orderResponse.clientSecret as string,
         {
           payment_method: {
             card: elements.getElement(CardElement)!,

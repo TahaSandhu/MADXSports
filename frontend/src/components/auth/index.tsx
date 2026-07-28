@@ -44,51 +44,51 @@ export default function SignInPage() {
     router.push("/");
   };
 
-const onSubmit = async (data: SignInForm) => {
-  setLoading(true);
-  setError(null);
+  const onSubmit = async (data: SignInForm) => {
+    setLoading(true);
+    setError(null);
 
-  try {
-    const res = await fetch("/api/v1/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-    email: data.username,
-    password: data.password,
-  }),
-});
+    try {
+      const res = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.username,
+          password: data.password,
+        }),
+      });
 
-console.log("Status:", res.status);
+      console.log("Status:", res.status);
 
-const result = await res.json();
+      const result = await res.json();
 
-console.log("Response:", result);
-    if (!res.ok) {
-      setError(result.message || "Invalid email or password.");
+      console.log("Response:", result);
+      if (!res.ok) {
+        setError(result.message || "Invalid email or password.");
+        setLoading(false);
+        return;
+      }
+
+      // Save token
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+      }
+
+      // Save user (optional)
+      if (result.user) {
+        localStorage.setItem("user", JSON.stringify(result.user));
+      }
+
+      router.push("/");
+    } catch (err) {
+      console.error(err);
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Save token
-    if (result.token) {
-      localStorage.setItem("token", result.token);
-    }
-
-    // Save user (optional)
-    if (result.user) {
-      localStorage.setItem("user", JSON.stringify(result.user));
-    }
-
-    router.push("/");
-  } catch (err) {
-    console.error(err);
-    setError("Something went wrong. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
   return (
     <Box
       sx={{
@@ -167,7 +167,10 @@ console.log("Response:", result);
                 Welcome Back
               </Typography>
 
-              <Link href="/auth/signup" style={{ marginTop: 1, color: "#b0b0b0", cursor: "pointer" }}>
+              <Link
+                href="/auth/signup"
+                style={{ marginTop: 1, color: "#b0b0b0", cursor: "pointer" }}
+              >
                 Sign up if you don't have an account
               </Link>
             </Box>
