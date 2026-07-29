@@ -153,7 +153,7 @@ const onSubmit = async (data: ContactFormData) => {
                           verticalAlign: "baseline",
                         }}
                       >
-                        0092 334 1450990
+                        +92 334 1450990
                       </Button>
                     </Typography>
                   </Box>
