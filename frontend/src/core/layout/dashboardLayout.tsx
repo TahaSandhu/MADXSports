@@ -7,9 +7,7 @@ import { useEffect, useState } from "react";
 
 const menuItems = [
   { name: "Overview", path: "/dashboard" },
-  { name: "Orders", path: "/dashboard/orders",subItems: [
-      { name: "All Orders", path: "/dashboard/orders" },
-    ] },
+  { name: "Orders", path: "/dashboard/orders", disabled: true },
   { 
     name: "Products", 
     path: "/dashboard/products",
@@ -18,6 +16,7 @@ const menuItems = [
       { name: "Create Product", path: "/dashboard/products/create" },
     ]
   },
+  { name: "Reviews", path: "/dashboard/reviews" },
   { name: "Customers", path: "/dashboard/customers" },
 ];
 
@@ -103,14 +102,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </>
             ) : (
               <ListItemButton
-                onClick={() => router.push(item.path)}
+                disabled={item.disabled}
+                onClick={() => !item.disabled && router.push(item.path)}
                 sx={{
                   borderRadius: 2,
                   mb: 1,
-                  color: "#ccc",
+                  color: item.disabled ? "rgba(255, 255, 255, 0.25)" : "#ccc",
+                  cursor: item.disabled ? "not-allowed" : "pointer",
+                  "&.Mui-disabled": {
+                    opacity: 1, // keep our dark disabled color style
+                  },
                   "&:hover": {
-                    bgcolor: "rgba(255, 23, 68, 0.1)",
-                    color: "#ff1744",
+                    bgcolor: item.disabled ? "transparent" : "rgba(255, 23, 68, 0.1)",
+                    color: item.disabled ? "rgba(255, 255, 255, 0.25)" : "#ff1744",
                   },
                 }}
               >

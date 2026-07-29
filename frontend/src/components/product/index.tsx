@@ -110,6 +110,16 @@ const ProductList: React.FC<ProductListProps> = ({ slug = [], filter = "", searc
   const { getProducts } = useProductsApi();
   const router = useRouter();
 
+  // Determine active accordion expansion state
+  const activeParentName = useMemo(() => {
+    if (!slug || slug.length === 0) return "";
+    const parentSlug = slug[0];
+    const match = CATEGORIES_DATA.find(
+      (c) => c.name.toLowerCase() === parentSlug.toLowerCase() || c.url === `/${parentSlug}`
+    );
+    return match ? match.name : "";
+  }, [slug]);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -117,6 +127,27 @@ const ProductList: React.FC<ProductListProps> = ({ slug = [], filter = "", searc
   // Filters State
   const [priceRange, setPriceRange] = useState<number[]>([0, 500]);
   const [sortBy, setSortBy] = useState<string>("featured");
+  const [expandedAccordion, setExpandedAccordion] = useState<string | null>(null);
+
+  // Sync expanded accordion with active category on page change
+  useEffect(() => {
+    if (activeParentName) {
+      setExpandedAccordion(activeParentName);
+    } else {
+      setExpandedAccordion(null);
+    }
+  }, [activeParentName]);
+
+  const handleAccordionChange = (category: any) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    if (isExpanded) {
+      setExpandedAccordion(category.name);
+      if (category.url) {
+        router.push(category.url);
+      }
+    } else {
+      setExpandedAccordion(null);
+    }
+  };
 
   // Fetch products
   useEffect(() => {
@@ -138,16 +169,6 @@ const ProductList: React.FC<ProductListProps> = ({ slug = [], filter = "", searc
   useEffect(() => {
     setPage(1);
   }, [slug, filter, search, priceRange, sortBy]);
-
-  // Determine active accordion expansion state
-  const activeParentName = useMemo(() => {
-    if (!slug || slug.length === 0) return "";
-    const parentSlug = slug[0];
-    const match = CATEGORIES_DATA.find(
-      (c) => c.name.toLowerCase() === parentSlug.toLowerCase() || c.url === `/${parentSlug}`
-    );
-    return match ? match.name : "";
-  }, [slug]);
 
   // Category matching
   const categoryMatch = useMemo(() => getCategoryMatchFn(slug, filter), [slug, filter]);
@@ -315,14 +336,12 @@ const ProductList: React.FC<ProductListProps> = ({ slug = [], filter = "", searc
                       Categories
                     </Typography>
                     {CATEGORIES_DATA.filter((cat) => cat.name !== "Dashboard" && cat.name !== "Contact").map((category) => {
-                      const isExpanded = activeParentName === category.name;
+                      const isExpanded = expandedAccordion === category.name;
                       return (
                         <Accordion
                           key={category.name}
                           expanded={isExpanded}
-                          onChange={() => {
-                            if (category.url) router.push(category.url);
-                          }}
+                          onChange={handleAccordionChange(category)}
                           sx={{
                             bgcolor: "transparent",
                             backgroundImage: "none",
@@ -624,9 +643,18 @@ const ProductList: React.FC<ProductListProps> = ({ slug = [], filter = "", searc
                 </Box>
               ) : (
                 <>
-                  <Grid container spacing={4}>
+                  <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                     {paginatedProducts.map((product) => (
-                      <Grid key={product._id} size={{ xs: 12, sm: 6, md: slug.length > 0 ? 4 : 4 }} sx={{ display: "flex" }}>
+                      <Grid
+                        key={product._id}
+                        size={{
+                          xs: 6,
+                          sm: 4,
+                          md: slug.length > 0 ? 6 : 4,
+                          lg: slug.length > 0 ? 4 : 3,
+                        }}
+                        sx={{ display: "flex" }}
+                      >
                         <ProductCard product={product} />
                       </Grid>
                     ))}

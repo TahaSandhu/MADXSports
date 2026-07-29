@@ -69,9 +69,9 @@ const TrendingCarousel: React.FC<CarouselProps> = ({ products, title }) => {
             <Box 
               key={product._id} 
               sx={{ 
-                minWidth: { xs: '280px', sm: '320px', md: '360px' },
+                minWidth: { xs: '240px', sm: '280px', md: '320px' },
                 scrollSnapAlign: 'start',
-                display: 'flex', // Add this
+                display: 'flex',
               }}
             >
               <ProductCard product={product} />

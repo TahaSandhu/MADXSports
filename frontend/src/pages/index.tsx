@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import ProductList from "@/components/product";
-import ContactPage from "@/components/contact/ContactPage";
 import Loader from "@/components/common/Loader";
 
 const CatchAllPage = () => {
@@ -17,14 +16,6 @@ const CatchAllPage = () => {
       ? slug
       : [slug]
     : [];
-
-  const isContactPage =
-    slugArray.length === 1 &&
-    slugArray[0].toLowerCase() === "contact";
-
-  if (isContactPage) {
-    return <ContactPage />;
-  }
 
   const isShopPage =
     slugArray.length === 1 &&

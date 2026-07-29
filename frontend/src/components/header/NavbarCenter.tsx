@@ -2,7 +2,7 @@
 
 import { Box, Button, Tooltip } from "@mui/material";
 import { ExpandMore } from "@mui/icons-material";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CATEGORIES_DATA } from "@/core/constants";
 import { useRouter } from "next/router";
 
@@ -61,6 +61,17 @@ const Dropdown = ({ category }: { category: Category }) => {
   const [open, setOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setOpen(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router]);
 
   if (!category.sections && !category.items) return null;
 

@@ -73,11 +73,11 @@ const router = useRouter();
           )}
         </Box>
 
-        <CardContent sx={{ flexGrow: 1, p: 2, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-          <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, textTransform: 'uppercase' }}>
+        <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 }, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+          <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 700, textTransform: 'uppercase', fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
             {product.category}
           </Typography>
-          <Typography variant="h6" noWrap sx={{ fontWeight: 700 }}>
+          <Typography variant="h6" noWrap sx={{ fontWeight: 700, fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' } }}>
             {product.name}
           </Typography>
           <Box sx={{ mt: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -86,7 +86,7 @@ const router = useRouter();
               size="small"
               endIcon={<ArrowUpRight size={16} />}
               onClick={() => router.push(`/product-detail/${product._id}`)}
-              sx={{ color: 'white', '&:hover': { color: 'primary.main' } }}
+              sx={{ color: 'white', '&:hover': { color: 'primary.main' }, fontSize: { xs: '0.75rem', sm: '0.8125rem' } }}
             >
               Details
             </Button>

@@ -4,7 +4,6 @@
   import TrendingCarousel from "@/components/trending-bar/trendingcards";
   import { useProducts } from "@/hooks/useProduct";
   import Loader from "@/components/common/Loader";
-  import ContactPage from "@/components/contact/ContactPage";
 
   const CatchAllPage = () => {
     const router = useRouter();
@@ -24,10 +23,6 @@
     const { trendingProducts = [], newReleases = [], loading } = useProducts();
 
     const isHomePage = slugArray.length === 0;
-
-    const isContactPage =
-      slugArray.length === 1 &&
-      slugArray[0].toLowerCase() === "contact";
 
     if (loading && isHomePage) {
       return <Loader />;
@@ -55,10 +50,6 @@
           )}
         </>
       );
-    }
-
-    if (isContactPage) {
-      return <ContactPage />;
     }
 
     const isShopPage =

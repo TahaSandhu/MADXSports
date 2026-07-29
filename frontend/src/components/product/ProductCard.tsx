@@ -111,23 +111,46 @@ const ProductCard = ({ product }: { product: Product }) => {
         </Box>
 
         <CardContent
-          sx={{ flexGrow: 1, p: 2, display: "flex", flexDirection: "column", gap: 1 }}
+          sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 }, display: "flex", flexDirection: "column", gap: { xs: 0.5, sm: 1 } }}
         >
-          <Typography variant="h6" noWrap sx={{ fontWeight: "bold", color: "#ffffff" }}>
+          <Typography
+            variant="h6"
+            noWrap
+            sx={{
+              fontWeight: "bold",
+              color: "#ffffff",
+              fontSize: { xs: "0.875rem", sm: "1rem", md: "1.1rem" },
+            }}
+          >
             {product.name}
           </Typography>
 
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: { xs: "flex-start", sm: "center" },
+              justifyContent: "space-between",
+              gap: { xs: 0.5, sm: 0 },
+            }}
+          >
             <Rating value={product.rating || 0} precision={0.5} readOnly size="small" />
-            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#ff1744" }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                color: "#ff1744",
+                fontSize: { xs: "0.95rem", sm: "1.1rem", md: "1.2rem" },
+              }}
+            >
               {getPrice(product.price)}
             </Typography>
           </Box>
 
           {/* Color Swatches */}
           {product.colors && product.colors.length > 0 && (
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 0.5 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary", mr: 0.5 }}>
+            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 0.5, flexWrap: "wrap" }}>
+              <Typography variant="caption" sx={{ color: "text.secondary", mr: 0.5, fontSize: { xs: "0.7rem", sm: "0.75rem" } }}>
                 Colors:
               </Typography>
               {product.colors.slice(0, 5).map((color) => {
@@ -136,8 +159,8 @@ const ProductCard = ({ product }: { product: Product }) => {
                   <Box
                     key={color}
                     sx={{
-                      width: 14,
-                      height: 14,
+                      width: { xs: 12, sm: 14 },
+                      height: { xs: 12, sm: 14 },
                       borderRadius: "50%",
                       backgroundColor: hex,
                       border: "1px solid rgba(255, 255, 255, 0.4)",
@@ -153,19 +176,19 @@ const ProductCard = ({ product }: { product: Product }) => {
           {/* Sizes */}
           {sizes.length > 0 && (
             <Box sx={{ display: "flex", gap: 0.5, alignItems: "center", flexWrap: "wrap", mt: 0.5 }}>
-              <Typography variant="caption" sx={{ color: "text.secondary", mr: 0.5 }}>
+              <Typography variant="caption" sx={{ color: "text.secondary", mr: 0.5, fontSize: { xs: "0.7rem", sm: "0.75rem" } }}>
                 Sizes:
               </Typography>
               {sizes.map((size) => (
                 <Box
                   key={size}
                   sx={{
-                    px: 0.8,
+                    px: { xs: 0.5, sm: 0.8 },
                     py: 0.1,
                     borderRadius: "4px",
                     border: "1px solid rgba(255, 23, 68, 0.3)",
                     bgcolor: "rgba(255, 23, 68, 0.05)",
-                    fontSize: "0.65rem",
+                    fontSize: { xs: "0.6rem", sm: "0.65rem" },
                     fontWeight: "bold",
                     color: "#ffffff",
                   }}

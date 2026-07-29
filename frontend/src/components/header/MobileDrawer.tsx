@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { CATEGORIES_DATA } from "@/core/constants";
+import { useRouter } from "next/router";
 
 const hoverStyle = {
   transition: "all 0.3s ease",
@@ -38,42 +39,45 @@ const MobileDrawer = ({
 
   return (
     <Drawer open={open} onClose={onClose} ModalProps={{ disableScrollLock: true }}>
-      <Box
-        sx={{
-          width: 250,
-          height: "100%",
-          overflowY: "auto",
-          "&::-webkit-scrollbar": {
-            width: "6px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "rgba(255,255,255,0.05)",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "linear-gradient(180deg, #ff1744, #ff9100)",
-            borderRadius: "10px",
-          },
-          "&::-webkit-scrollbar-thumb:hover": {
-            background: "linear-gradient(180deg, #ff4569, #ffab40)",
-          },
-        }}
-      >
-        <Typography sx={{ p: 2, fontWeight: "bold" }}>
-          Categories
-        </Typography>
+      {open && (
+        <Box
+          sx={{
+            width: 250,
+            height: "100%",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "rgba(255,255,255,0.05)",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "linear-gradient(180deg, #ff1744, #ff9100)",
+              borderRadius: "10px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              background: "linear-gradient(180deg, #ff4569, #ffab40)",
+            },
+          }}
+        >
+          <Typography sx={{ p: 2, fontWeight: "bold" }}>
+            Categories
+          </Typography>
 
-        <List>
-          {filteredCategories.map((cat) => (
-            <Dropdown key={cat.name} category={cat} />
-          ))}
-        </List>
-      </Box>
+          <List>
+            {filteredCategories.map((cat) => (
+              <Dropdown key={cat.name} category={cat} onClose={onClose} />
+            ))}
+          </List>
+        </Box>
+      )}
     </Drawer>
   );
 };
 
-const Dropdown = ({ category }: any) => {
+const Dropdown = ({ category, onClose }: any) => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const hasItems = Array.isArray(category.items) && category.items.length > 0;
   const hasSections =
@@ -82,7 +86,15 @@ const Dropdown = ({ category }: any) => {
   if (!hasItems && !hasSections) {
     return (
       <ListItem disablePadding>
-        <ListItemButton sx={hoverStyle}>
+        <ListItemButton
+          sx={hoverStyle}
+          onClick={() => {
+            if (category.url) {
+              router.push(category.url);
+              onClose();
+            }
+          }}
+        >
           <ListItemText primary={category.name} />
         </ListItemButton>
       </ListItem>
@@ -102,10 +114,24 @@ const Dropdown = ({ category }: any) => {
         <List component="div" disablePadding>
           {hasSections
             ? category.sections.map((section: any) => (
-                <SectionDropdown key={section.title} section={section} />
+                <SectionDropdown
+                  key={section.title}
+                  section={section}
+                  categoryUrl={category.url}
+                  onClose={onClose}
+                />
               ))
             : category.items.map((item: string) => (
-                <ListItemButton key={item} sx={{ pl: 4 }}>
+                <ListItemButton
+                  key={item}
+                  sx={{ pl: 4 }}
+                  onClick={() => {
+                    if (category.url) {
+                      router.push(`${category.url}?filter=${encodeURIComponent(item)}`);
+                      onClose();
+                    }
+                  }}
+                >
                   <ListItemText primary={item} />
                 </ListItemButton>
               ))}
@@ -115,8 +141,9 @@ const Dropdown = ({ category }: any) => {
   );
 };
 
-const SectionDropdown = ({ section }: any) => {
+const SectionDropdown = ({ section, categoryUrl, onClose }: any) => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <>
@@ -138,8 +165,38 @@ const SectionDropdown = ({ section }: any) => {
       </ListItemButton>
       <Collapse in={open} unmountOnExit>
         <List component="div" disablePadding>
+          {section.url && (
+            <ListItemButton
+              sx={{ pl: 7 }}
+              onClick={() => {
+                router.push(section.url);
+                onClose();
+              }}
+            >
+              <ListItemText
+                primary="View All"
+                sx={{
+                  "& .MuiTypography-root": {
+                    fontSize: "0.85rem",
+                    fontWeight: "bold",
+                    color: "#ff1744",
+                  },
+                }}
+              />
+            </ListItemButton>
+          )}
           {section.items.map((item: string) => (
-            <ListItemButton key={item} sx={{ pl: 7 }}>
+            <ListItemButton
+              key={item}
+              sx={{ pl: 7 }}
+              onClick={() => {
+                const url = section.url || categoryUrl;
+                if (url) {
+                  router.push(`${url}?filter=${encodeURIComponent(item)}`);
+                  onClose();
+                }
+              }}
+            >
               <ListItemText
                 primary={item}
                 sx={{ "& .MuiTypography-root": { fontSize: "0.85rem" } }}
